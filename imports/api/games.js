@@ -5,9 +5,7 @@ import { generateAccessCode } from '/utils';
 
 export const Games = new Mongo.Collection('games');
 
-const Schemas = {};
-
-Schemas.Game = new SimpleSchema({
+Games.schema = new SimpleSchema({
     accessCode: {
         type: String,
         index: 1,
@@ -29,4 +27,4 @@ Schemas.Game = new SimpleSchema({
     },
 });
 
-Games.attachSchema(Schemas.Game);
+Games.attachSchema(Games.schema);

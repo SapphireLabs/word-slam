@@ -22,3 +22,8 @@ static-html             # Define static page content in .html files
 react-meteor-data       # React higher-order component for reactively tracking Meteor data
 aldeed:collection2@3.0.0
 aldeed:schema-index
+reywood:publish-composite
+mdg:validated-method
+aldeed:simple-schema
+aldeed:schema-deny
+accounts-base
