@@ -38,4 +38,10 @@ Players.schema = new SimpleSchema({
     },
 });
 
+Players.publicFields = {
+    name: 1,
+    gameId: 1,
+    userId: 1,
+};
+
 Players.attachSchema(Players.schema);

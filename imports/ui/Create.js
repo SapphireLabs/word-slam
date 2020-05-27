@@ -1,19 +1,26 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { Games } from '/imports/api/games';
-import { add } from '/imports/api/players/methods';
+import { add as addGame, Games } from '/imports/api/games';
+import { add as addPlayer } from '/imports/api/players';
 
 export const Create = () => {
-  const createGame = async () => {
-      const gameId = await Games.insert({});
-      add.call({ name: 'player', gameId }, (response, error) => {
-          console.log(response, error);
-      });
-  };
+    const history = useHistory();
 
-  return (
-    <div>
-      <button onClick={createGame}>Create game</button>
-    </div>
-  );
+    const createGame = async () => {
+        addGame.call({}, (_, { gameId }) => {
+            const game = Games.findOne({ _id: gameId }, { fields: Games.publicFields });
+            addPlayer.call({ name: 'player', gameId }, (response, error) => {
+                console.log(response, error);
+
+                history.push(`/games/${game.accessCode}`);
+            });
+        });
+    };
+
+    return (
+      <div>
+        <button onClick={createGame}>Create game</button>
+      </div>
+    );
 };
