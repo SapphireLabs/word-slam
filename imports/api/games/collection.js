@@ -25,6 +25,10 @@ Games.schema = new SimpleSchema({
             }
         },
     },
+    status: {
+        type: String,
+        defaultValue: 'WAITING',
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -51,6 +55,7 @@ Games.schema = new SimpleSchema({
 
 Games.publicFields = {
     accessCode: 1,
+    status: 1,
 };
 
 Games.attachSchema(Games.schema);

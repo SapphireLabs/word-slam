@@ -4,17 +4,15 @@
 // import { Games } from '../games';
 // import { Players } from './collection';
 //
-// Meteor.publishComposite('players.inGame', function(gameId) {
+// Meteor.publishComposite('players.inGame', function(accessCode) {
 //     new SimpleSchema({
-//         gameId: { type: String }
-//     }).validate({ gameId });
-//
-//     console.log('Player connected: ', this.connection);
+//         accessCode: { type: String }
+//     }).validate({ accessCode });
 //
 //     return {
 //         find: () => {
 //             const query = {
-//                 _id: gameId
+//                 accessCode
 //             };
 //
 //             // We only need the _id field in this query, since it's

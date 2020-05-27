@@ -1,24 +1,26 @@
 import React from 'react';
-import { useTracker } from 'meteor/react-meteor-data';
-import { useParams } from 'react-router-dom';
+import { Redirect, useLocation, useParams } from 'react-router-dom';
 
-import { Players } from '/imports/api/players';
-import { Games } from '/imports/api/games';
+import { usePlayerState, useGameState } from '/imports/ui/core';
 
 export const Game = () => {
+    const location = useLocation();
     const { accessCode } = useParams();
-    const game = useTracker(() => Games.find({ accessCode }));
+    const { player, playerId } = usePlayerState();
+    const { game, players } = useGameState(accessCode);
+    console.log(player, game, players)
 
-    if (!game) {
-        return <div>Game not found.</div>;
+    if (game && !playerId) {
+        return <Redirect to={{ pathname: '/', state: { accessCode } }} />;
     }
 
-    const players = useTracker(() => Players.find({ gameId: game._id }));
-
-    return (
+    return game ? (
         <div>
             <div>
                 Game access code: {accessCode}
+            </div>
+            <div>
+                Status: {game.status}
             </div>
             <ul>
                 {players.map((player, i) => (
@@ -26,5 +28,5 @@ export const Game = () => {
                 ))}
             </ul>
         </div>
-    );
+    ) : null;
 };

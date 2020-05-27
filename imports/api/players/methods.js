@@ -6,6 +6,10 @@ import { Players } from './collection';
 export const add = new ValidatedMethod({
     name: 'Players.add',
     validate: new SimpleSchema({
+        _id: {
+            type: String,
+            optional: true,
+        },
         name: {
             type: String,
         },
@@ -13,7 +17,7 @@ export const add = new ValidatedMethod({
             type: String,
         },
     }).validator(),
-    run: ({ name, gameId }) => {
+    run: ({ _id, name, gameId }) => {
         const user = Meteor.user();
         console.log('Method - Players.add / run', user);
 
@@ -22,14 +26,16 @@ export const add = new ValidatedMethod({
             message: 'There was some server error.'
         };
 
-        const success = Players.insert({
+        const playerId = Players.upsert({ _id }, { $set: {
             name,
             gameId,
-        });
+        } });
+        console.log(playerId)
 
-        if (success) {
+        if (playerId) {
             response.success = true;
             response.message = 'Player added.';
+            response.playerId = playerId.insertedId;
         }
 
         return response;
