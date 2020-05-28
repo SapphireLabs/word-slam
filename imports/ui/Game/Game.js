@@ -8,8 +8,9 @@ export const Game = () => {
     const { accessCode } = useParams();
     const { player, playerId } = usePlayerState();
     const { game, players } = useGameState(accessCode);
+    console.log(game, player);
 
-    if (!game) {
+    if (!game || !player) {
         return null;
     }
 

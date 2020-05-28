@@ -23,14 +23,18 @@ export const add = new ValidatedMethod({
 
         const response = {
             success: false,
-            message: 'There was some server error.'
+            message: 'There was some server error.',
         };
 
-        const playerId = Players.upsert({ _id }, { $set: {
-            name,
-            gameId,
-        } });
-        console.log(playerId)
+        const playerId = Players.upsert(
+            { _id },
+            {
+                $set: {
+                    name,
+                    gameId,
+                },
+            }
+        );
 
         if (playerId) {
             response.success = true;
@@ -40,4 +44,4 @@ export const add = new ValidatedMethod({
 
         return response;
     },
-})
+});
