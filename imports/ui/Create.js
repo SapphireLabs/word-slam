@@ -6,7 +6,7 @@ import { add as addGame, Games } from '/imports/api/games';
 import { add as addPlayer } from '/imports/api/players';
 import { usePlayerState } from './core';
 
-export const Create = (props) => {
+export const Create = () => {
     const { player, setPlayerId } = usePlayerState();
     const [name, setName] = useState('');
     const history = useHistory();
@@ -27,12 +27,15 @@ export const Create = (props) => {
                 const game = Games.findOne({ accessCode }, { fields: Games.publicFields });
 
                 if (game) {
-                    addPlayer.call({ _id: get(player, '_id'), name, gameId: game._id }, (error, response) => {
-                        if (response.playerId) {
-                            setPlayerId(response.playerId);
+                    addPlayer.call(
+                        { _id: get(player, '_id'), name, gameId: game._id },
+                        (error, response) => {
+                            if (response.playerId) {
+                                setPlayerId(response.playerId);
+                            }
+                            history.push(`/games/${game.accessCode}`);
                         }
-                        history.push(`/games/${game.accessCode}`);
-                    });
+                    );
                 }
             } else {
                 // creating new game
@@ -51,16 +54,13 @@ export const Create = (props) => {
     };
 
     return (
-      <div>
-          <form id="player" onSubmit={onSubmit} >
-              <input
-                  type="text"
-                  placeholder="Player name"
-                  onChange={onChange}
-                  value={name}
-              />
-              <button type="submit" form="player">Play</button>
-          </form>
-      </div>
+        <div>
+            <form id="player" onSubmit={onSubmit}>
+                <input type="text" placeholder="Player name" onChange={onChange} value={name} />
+                <button type="submit" form="player">
+                    Play
+                </button>
+            </form>
+        </div>
     );
 };
