@@ -10,12 +10,16 @@ export const Game = () => {
     const { game, players } = useGameState(accessCode);
     console.log(game, player);
 
-    if (!game || !player) {
+    if (!game) {
         return null;
     }
 
     if (game && (!playerId || (player && game._id !== player.gameId))) {
         return <Redirect to={{ pathname: '/', state: { accessCode } }} />;
+    }
+
+    if (!player) {
+        return null;
     }
 
     return game.status === 'WAITING' ? (
