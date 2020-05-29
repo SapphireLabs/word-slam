@@ -26,7 +26,7 @@ const useStyles = makeStyles({
         fontSize: 14,
     },
     pos: {
-        marginBottom: 4,
+        marginBottom: 2,
     },
     fullWidth: {
         width: '100%',
@@ -44,7 +44,7 @@ const useStyles = makeStyles({
 export const Chat = ({ gameId, playerId, players }) => {
     const classes = useStyles();
     const [message, setMessage] = useState('');
-    const chats = useTracker(() => Chats.find({ gameId })).fetch();
+    const chats = useTracker(() => Chats.find({ gameId }).fetch());
 
     useEffect(() => {
         this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
@@ -65,7 +65,6 @@ export const Chat = ({ gameId, playerId, players }) => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        console.log(message);
         if (message) {
             Chats.insert({ gameId, playerId, message });
             setMessage('');
@@ -75,8 +74,8 @@ export const Chat = ({ gameId, playerId, players }) => {
     return (
         <Card className={classes.root}>
             <CardContent className={classes.content}>
-                {chats.map((chat) => (
-                    <Typography className={classes.pos} variant="p">
+                {chats.map((chat, i) => (
+                    <Typography key={`chat-${i}`} className={classes.pos} variant="caption">
                         <span className={classes.playerName}>{playerMap[chat.playerId].name}:</span>{' '}
                         {chat.message}
                     </Typography>

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { clues } from '/utils/fixtures';
 import { ClueSelect } from './ClueSelect';
+import { Board } from './Board';
 
 export const useRoundStyles = makeStyles((_) => ({
     clueContainer: {
@@ -25,7 +26,7 @@ export const Round = ({ game, player, players, rounds = [] }) => {
                 <>
                     <h2>Category: {currentRound.category}</h2>
                     <h2>Story word: {player.isStoryteller ? currentRound.word : '?'}</h2>
-                    <div>GRID</div>
+                    <Board />
                     {player.isStoryteller && (
                         <>
                             <h3>Clues</h3>
