@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Container } from '@material-ui/core';
 
 import { Create } from './Menu';
@@ -9,17 +11,19 @@ import './App.scss';
 
 export const App = () => {
     return (
-        <Container maxWidth="sm">
-            <Router>
-                <Switch>
-                    <Route exact path="/games/:accessCode">
-                        <Game />
-                    </Route>
-                    <Route path="/">
-                        <Create />
-                    </Route>
-                </Switch>
-            </Router>
-        </Container>
+        <DndProvider backend={HTML5Backend}>
+            <Container maxWidth="sm">
+                <Router>
+                    <Switch>
+                        <Route exact path="/games/:accessCode">
+                            <Game />
+                        </Route>
+                        <Route path="/">
+                            <Create />
+                        </Route>
+                    </Switch>
+                </Router>
+            </Container>
+        </DndProvider>
     );
 };

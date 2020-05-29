@@ -25,6 +25,19 @@ Rounds.schema = new SimpleSchema({
         type: String,
         optional: true,
     },
+    clues: {
+        type: Array,
+        defaultValue: new Array(8).fill(null),
+    },
+    'clues.$': {
+        type: Object,
+    },
+    'clues.$.label': {
+        type: String,
+    },
+    'clues.$.category': {
+        type: String,
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -56,6 +69,7 @@ Rounds.publicFields = {
     category: 1,
     status: 1,
     winnerId: 1,
+    clues: 1,
 };
 
 Rounds.attachSchema(Rounds.schema);

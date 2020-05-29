@@ -26,7 +26,7 @@ export const Round = ({ game, player, players, rounds = [] }) => {
                 <>
                     <h2>Category: {currentRound.category}</h2>
                     <h2>Story word: {player.isStoryteller ? currentRound.word : '?'}</h2>
-                    <Board />
+                    <Board round={currentRound} />
                     {player.isStoryteller && (
                         <>
                             <h3>Clues</h3>
