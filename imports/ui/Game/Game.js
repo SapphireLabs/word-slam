@@ -3,6 +3,7 @@ import { Redirect, useParams } from 'react-router-dom';
 
 import { usePlayerState, useGameState } from '/imports/ui/core';
 import { Lobby } from './Lobby';
+import { Round } from './Round';
 
 export const Game = () => {
     const { accessCode } = useParams();
@@ -25,6 +26,6 @@ export const Game = () => {
     return game.status === 'WAITING' ? (
         <Lobby game={game} player={player} players={players} />
     ) : (
-        <div>Round in progress</div>
+        <Round game={game} player={player} players={players} />
     );
 };

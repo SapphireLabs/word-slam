@@ -1,5 +1,5 @@
 export const clues = {
-    nouns: [
+    noun: [
         'man',
         'woman',
         'child',
@@ -55,7 +55,7 @@ export const clues = {
         'literature',
         'weather',
     ],
-    verbs: [
+    verb: [
         'eat',
         'drink',
         'give',
@@ -76,11 +76,11 @@ export const clues = {
         'hear',
         'shoot',
     ],
-    prepositions: [
-        'under',
-        'over',
+    preposition: [
         'many',
         'for',
+        'under',
+        'over',
         'out',
         'on',
         'by',
@@ -96,9 +96,7 @@ export const clues = {
         'times',
         'with',
     ],
-    adjectives: [
-        'long',
-        'thin',
+    adjective: [
         'white',
         'black',
         'green',
@@ -109,6 +107,8 @@ export const clues = {
         'brown',
         'grey',
         'transparent',
+        'long',
+        'thin',
         'loud',
         'funny',
         'fictitious',
