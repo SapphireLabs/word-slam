@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 
 import { usePlayerState, useGameState } from '/imports/ui/core';
+import { Chat } from '/imports/ui/Chat';
 import { Lobby } from './Lobby';
 import { Round } from './Round';
 
@@ -22,9 +23,14 @@ export const Game = () => {
         return null;
     }
 
-    return game.status === 'WAITING' ? (
-        <Lobby game={game} player={player} players={players} />
-    ) : (
-        <Round game={game} player={player} players={players} rounds={rounds} />
+    return (
+        <>
+            {game.status === 'WAITING' ? (
+                <Lobby game={game} player={player} players={players} />
+            ) : (
+                <Round game={game} player={player} players={players} rounds={rounds} />
+            )}
+            <Chat gameId={game._id} playerId={player._id} players={players} />
+        </>
     );
 };
