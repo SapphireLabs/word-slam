@@ -48,4 +48,19 @@ export const useStyles = makeStyles((_) => ({
     noMargin: {
         margin: 0,
     },
+    player: {
+        width: '100%',
+        display: 'flex',
+        background: grey[300],
+        padding: 8,
+        marginBottom: 8,
+        fontSize: 10,
+        alignItems: 'center',
+    },
+    header: {
+        background: grey[400],
+        fontSize: 14,
+        fontWeight: 600,
+        lineHeight: 0.5,
+    },
 }));
