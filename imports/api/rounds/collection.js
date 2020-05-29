@@ -7,22 +7,19 @@ Rounds.schema = new SimpleSchema({
     gameId: {
         type: String,
     },
+    word: {
+        type: String,
+    },
+    category: {
+        type: String,
+    },
     team: {
         type: String,
         optional: true,
     },
-    target: {
+    status: {
         type: String,
-        autoValue: function() {
-            if (this.isInsert) {
-                // TODO: generate target word
-                const target = 'target';
-
-                return target;
-            } else {
-                this.unset();
-            }
-        },
+        defaultValue: 'IN_PROGRESS',
     },
     winnerId: {
         type: String,
@@ -55,7 +52,9 @@ Rounds.schema = new SimpleSchema({
 Rounds.publicFields = {
     gameId: 1,
     team: 1,
-    target: 1,
+    word: 1,
+    category: 1,
+    status: 1,
     winnerId: 1,
 };
 

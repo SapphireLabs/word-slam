@@ -6,7 +6,8 @@ import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { Players } from '/imports/api/players';
 import { Games } from '/imports/api/games';
-import { useStyles } from '/imports/ui/core/hooks';
+import { Rounds } from '/imports/api/rounds';
+import { useStyles, useStoryWord } from '/imports/ui/core/hooks';
 import { StorySelect } from './StorySelect';
 
 const Status = ({ game, player }) => {
@@ -28,6 +29,7 @@ const Status = ({ game, player }) => {
 
 export const Lobby = ({ game, player, players }) => {
     const classes = useStyles();
+    const { word, category } = useStoryWord();
     const { storyTeller, guessers, spectators } = useMemo(
         () =>
             players.reduce(
@@ -66,6 +68,7 @@ export const Lobby = ({ game, player, players }) => {
 
     const onClickStart = () => {
         Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
+        Rounds.insert({ gameId: game._id, word, category: category.label });
     };
 
     return (

@@ -8,8 +8,7 @@ import { Round } from './Round';
 export const Game = () => {
     const { accessCode } = useParams();
     const { player, playerId } = usePlayerState();
-    const { game, players } = useGameState(accessCode);
-    console.log(game, player);
+    const { game, players, rounds } = useGameState(accessCode);
 
     if (!game) {
         return null;
@@ -26,6 +25,6 @@ export const Game = () => {
     return game.status === 'WAITING' ? (
         <Lobby game={game} player={player} players={players} />
     ) : (
-        <Round game={game} player={player} players={players} />
+        <Round game={game} player={player} players={players} rounds={rounds} />
     );
 };

@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import '/imports/api/games';
-import '/imports/api/players';
+import '/imports/api';
 
 Meteor.startup(() => {});
