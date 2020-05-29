@@ -68,7 +68,6 @@ export const Lobby = ({ game, player, players }) => {
     };
 
     const onClickStart = () => {
-        console.log(word);
         Rounds.insert({ gameId: game._id, word, category: trueCategory.label });
         Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
     };

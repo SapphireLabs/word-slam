@@ -10,6 +10,17 @@ Rounds.schema = new SimpleSchema({
     word: {
         type: String,
     },
+    hiddenWord: {
+        type: Array,
+        autoValue: function(data) {
+            if (this.isInsert) {
+                return data.word.split('').map((c) => !c.match(/[a-z0-9]/i));
+            }
+        },
+    },
+    'hiddenWord.$': {
+        type: Boolean,
+    },
     category: {
         type: String,
     },
@@ -66,6 +77,7 @@ Rounds.publicFields = {
     gameId: 1,
     team: 1,
     word: 1,
+    hiddenWord: 1,
     category: 1,
     status: 1,
     winnerId: 1,

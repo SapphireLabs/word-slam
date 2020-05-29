@@ -379,7 +379,7 @@ export const stories = {
         'QR Code',
         'Internet troll',
         'Shazam',
-        'SPAM',
+        'Spam',
         'Hotspot',
         'Streaming',
         'Minecraft',
