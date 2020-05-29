@@ -2,6 +2,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
 import { Players } from './collection';
+import { Chats } from '../chats';
 
 export const add = new ValidatedMethod({
     name: 'Players.add',
@@ -37,6 +38,10 @@ export const add = new ValidatedMethod({
                 },
             }
         );
+        Chats.insert({
+            gameId,
+            message: `${name} has joined the game!`,
+        });
 
         if (playerId) {
             response.success = true;

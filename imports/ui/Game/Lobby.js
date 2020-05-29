@@ -29,7 +29,8 @@ const Status = ({ game, player }) => {
 
 export const Lobby = ({ game, player, players }) => {
     const classes = useStyles();
-    const { word, category } = useStoryWord();
+    const wordProps = useStoryWord();
+    const { word, category } = wordProps;
     const { storyTeller, guessers, spectators } = useMemo(
         () =>
             players.reduce(
@@ -67,8 +68,9 @@ export const Lobby = ({ game, player, players }) => {
     };
 
     const onClickStart = () => {
-        Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
+        console.log(word);
         Rounds.insert({ gameId: game._id, word, category: category.label });
+        Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
     };
 
     return (
@@ -84,7 +86,7 @@ export const Lobby = ({ game, player, players }) => {
                 </div>
             </h3>
             <Status game={game} player={player} />
-            {player.isStoryteller && <StorySelect />}
+            {player.isStoryteller && <StorySelect {...wordProps} />}
             <div
                 className={classNames(classes.player, classes.header, classes.pointer)}
                 onClick={onClickStoryteller}

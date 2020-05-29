@@ -23,9 +23,8 @@ export const useStyles = makeStyles({
     },
 });
 
-export const StorySelect = () => {
+export const StorySelect = ({ options, category, setCategory, word, generateWord }) => {
     const classes = useStyles();
-    const { options, category, setCategory, word, generateWord } = useStoryWord();
 
     const onChange = (val) => setCategory(val);
 

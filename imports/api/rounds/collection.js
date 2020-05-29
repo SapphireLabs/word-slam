@@ -70,6 +70,7 @@ Rounds.publicFields = {
     status: 1,
     winnerId: 1,
     clues: 1,
+    updatedAt: 1,
 };
 
 Rounds.attachSchema(Rounds.schema);

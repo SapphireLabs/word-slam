@@ -9,6 +9,7 @@ Chats.schema = new SimpleSchema({
     },
     playerId: {
         type: String,
+        optional: true,
     },
     message: {
         type: String,
