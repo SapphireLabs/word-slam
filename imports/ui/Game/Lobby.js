@@ -30,7 +30,7 @@ const Status = ({ game, player }) => {
 export const Lobby = ({ game, player, players }) => {
     const classes = useStyles();
     const wordProps = useStoryWord();
-    const { word, category } = wordProps;
+    const { word, trueCategory } = wordProps;
     const { storyTeller, guessers, spectators } = useMemo(
         () =>
             players.reduce(
@@ -69,7 +69,7 @@ export const Lobby = ({ game, player, players }) => {
 
     const onClickStart = () => {
         console.log(word);
-        Rounds.insert({ gameId: game._id, word, category: category.label });
+        Rounds.insert({ gameId: game._id, word, category: trueCategory.label });
         Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
     };
 

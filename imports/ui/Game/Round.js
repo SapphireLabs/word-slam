@@ -43,7 +43,12 @@ export const Round = ({ game, player, players, rounds = [] }) => {
             {currentRound && (
                 <>
                     <h2>Category: {currentRound.category}</h2>
-                    <h2>Story word: {player.isStoryteller ? currentRound.word : '?'}</h2>
+                    <h2>
+                        Story word:{' '}
+                        {player.isStoryteller
+                            ? currentRound.word
+                            : currentRound.word.replace(/[a-z]/gi, '_ ')}
+                    </h2>
                     <Board round={currentRound} />
                     {player.isStoryteller && (
                         <>

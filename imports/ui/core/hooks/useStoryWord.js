@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { stories } from '/utils/fixtures';
 
-const options = Object.keys(stories).map((category) => ({ label: category, value: category }));
+const toOption = (val) => ({ label: val, value: val });
+const options = Object.keys(stories).map(toOption);
 const randomOption = { label: 'Random', value: 'Random' };
 const allWords = Object.keys(stories).reduce((acc, category) => [...acc, ...stories[category]], []);
+const getCategory = (word) =>
+    toOption(Object.keys(stories).find((category) => stories[category].includes(word)));
 
 export const useStoryWord = () => {
     const [category, setCategory] = useState(randomOption);
@@ -21,7 +24,8 @@ export const useStoryWord = () => {
 
     return {
         options: [...options, randomOption],
-        category,
+        category: category,
+        trueCategory: category === randomOption ? getCategory(word) : category,
         setCategory,
         word,
         generateWord,
