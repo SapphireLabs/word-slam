@@ -40,7 +40,7 @@ export const add = new ValidatedMethod({
             const player = Players.findOne({ _id: playerId }, { fields: Players.publicFields });
             const { word } = currentRound;
 
-            if (!player.isStoryteller && word.length === message.length) {
+            if (!player.isStoryteller && player.team && word.length === message.length) {
                 if (word.match(new RegExp(message, 'i'))) {
                     Chats.insert({
                         gameId,

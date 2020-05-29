@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
 import green from '@material-ui/core/colors/green';
+import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
@@ -23,6 +24,7 @@ const useStyles = makeStyles({
         overflowY: 'scroll',
         display: 'flex',
         flexDirection: 'column',
+        borderBottom: `1px solid ${grey[200]}`,
     },
     title: {
         fontSize: 14,
