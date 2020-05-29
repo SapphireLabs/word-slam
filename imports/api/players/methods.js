@@ -17,7 +17,7 @@ export const add = new ValidatedMethod({
             type: String,
         },
     }).validator(),
-    run: ({ _id, name, gameId }) => {
+    run: ({ _id, name, gameId, isStoryteller = false, team = null }) => {
         const user = Meteor.user();
         console.log('Method - Players.add / run', user);
 
@@ -32,6 +32,8 @@ export const add = new ValidatedMethod({
                 $set: {
                     name,
                     gameId,
+                    isStoryteller,
+                    team,
                 },
             }
         );

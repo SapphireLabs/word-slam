@@ -20,16 +20,21 @@ export const Round = ({ game, player, players }) => {
 
     return (
         <div>
-            <h3>Clues</h3>
-            <div className={roundClasses.clueContainer}>
-                {Object.keys(clues).map((type) => (
-                    <ClueSelect
-                        className={roundClasses.clueSelect}
-                        key={`ClueSelect-${type}`}
-                        type={type}
-                    />
-                ))}
-            </div>
+            BOARD GRID HERE
+            {player.isStoryteller && (
+                <>
+                    <h3>Clues</h3>
+                    <div className={roundClasses.clueContainer}>
+                        {Object.keys(clues).map((type) => (
+                            <ClueSelect
+                                className={roundClasses.clueSelect}
+                                key={`ClueSelect-${type}`}
+                                type={type}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

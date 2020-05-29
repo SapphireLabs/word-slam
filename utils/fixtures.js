@@ -134,47 +134,48 @@ export const clues = {
     ],
 };
 
-const stories = [
-    {
-        category: 'Animals, Plants, Creatures',
-        words: ['Mammoth', 'Wolf', 'Tick', 'Bear', 'Goblin', 'Fairy'],
-    },
-    {
-        category: 'Travel, Outdoors, History',
-        words: [
-            'Tour de France',
-            'Amsterdam',
-            'Buckingham Palace',
-            'Barcelona',
-            'Oasis',
-            'Washington',
-        ],
-    },
-    {
-        category: 'Food & Drink',
-        words: ['Wasabi', 'Caviar', 'Energy drink', 'Pancake', 'Dessert', 'Radish'],
-    },
-    {
-        category: 'Web & Social Media',
-        words: ['Playstation', 'E-commerce', 'Post', 'ROFL', 'Password', 'Snapchat', 'Pepe'],
-    },
-    {
-        category: 'Emotions & Miscellaneous',
-        words: ['Paw', 'Rumor', 'Driving instructor', 'Feather', 'Hot-water bottle', 'Compass'],
-    },
-    {
-        category: 'Science, Technology, Religion',
-        words: ['Black hole', 'Brain', 'Devil', 'Rust', 'Logbook', 'Communion'],
-    },
-    {
-        category: 'Movies, Music, Literature',
-        words: [
-            'Photograph',
-            'Karl Lagerfeld',
-            'The Hobbit',
-            'LeBron James',
-            'Mark Twain',
-            'Step Up',
-        ],
-    },
-];
+export const stories = {
+    'Animals, Plants, Creatures': ['Mammoth', 'Wolf', 'Tick', 'Bear', 'Goblin', 'Fairy'],
+    'Travel, Outdoors, History': [
+        'Tour de France',
+        'Amsterdam',
+        'Buckingham Palace',
+        'Barcelona',
+        'Oasis',
+        'Washington',
+    ],
+    'Food & Drink': ['Wasabi', 'Caviar', 'Energy drink', 'Pancake', 'Dessert', 'Radish'],
+    'Web & Social Media': [
+        'Playstation',
+        'E-commerce',
+        'Post',
+        'ROFL',
+        'Password',
+        'Snapchat',
+        'Pepe',
+    ],
+    'Emotions & Miscellaneous': [
+        'Paw',
+        'Rumor',
+        'Driving instructor',
+        'Feather',
+        'Hot-water bottle',
+        'Compass',
+    ],
+    'Science, Technology, Religion': [
+        'Black hole',
+        'Brain',
+        'Devil',
+        'Rust',
+        'Logbook',
+        'Communion',
+    ],
+    'Movies, Music, Literature': [
+        'Photograph',
+        'Karl Lagerfeld',
+        'The Hobbit',
+        'LeBron James',
+        'Mark Twain',
+        'Step Up',
+    ],
+};

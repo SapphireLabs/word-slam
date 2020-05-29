@@ -7,6 +7,24 @@ import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { Players } from '/imports/api/players';
 import { Games } from '/imports/api/games';
 import { useStyles } from '/imports/ui/core/hooks';
+import { StorySelect } from './StorySelect';
+
+const Status = ({ game, player }) => {
+    const classes = useStyles();
+
+    return (
+        <div className={classNames(classes.containerCenter, classes.grey)}>
+            {player.isStoryteller ? (
+                <>
+                    <h3>You're the storyteller!</h3>
+                    <h5>Pick a category and story word and then start the round.</h5>
+                </>
+            ) : (
+                <h3>{game.status}</h3>
+            )}
+        </div>
+    );
+};
 
 export const Lobby = ({ game, player, players }) => {
     const classes = useStyles();
@@ -56,13 +74,14 @@ export const Lobby = ({ game, player, players }) => {
                 Game: {game.accessCode}
                 <div
                     className={classNames(classes.pointer, classes.marginLeft8)}
-                    onClick={() => copy(location.href.replace('game', 'join'))}
+                    onClick={() => copy(location.href)}
                     title="Copy join game link"
                 >
                     <FileCopyOutlinedIcon />
                 </div>
             </h3>
-            <h3 className={classNames(classes.containerCenter, classes.grey)}>{game.status}</h3>
+            <Status game={game} player={player} />
+            {player.isStoryteller && <StorySelect />}
             <div
                 className={classNames(classes.player, classes.header, classes.pointer)}
                 onClick={onClickStoryteller}
