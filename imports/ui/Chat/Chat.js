@@ -1,20 +1,17 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import T from 'prop-types';
-import classNames from 'classnames';
-import { get } from 'lodash';
-import { useTracker } from 'meteor/react-meteor-data';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
 import green from '@material-ui/core/colors/green';
 import { makeStyles } from '@material-ui/core/styles';
-
-import { add as addChat, Chats } from '/imports/api/chats';
-import { Games } from '/imports/api/games';
 import Button from '@material-ui/core/Button';
+
+import { add as addChat } from '/imports/api/chats';
+import { Games } from '/imports/api/games';
+import { ChatContent } from './ChatContent';
 
 const useStyles = makeStyles({
     root: {
@@ -52,11 +49,6 @@ const useStyles = makeStyles({
 export const Chat = ({ gameId, playerId, players }) => {
     const classes = useStyles();
     const [message, setMessage] = useState('');
-    const chats = useTracker(() => Chats.find({ gameId }, { sort: { createdAt: 1 } }).fetch());
-
-    useEffect(() => {
-        this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
-    }, [chats]);
 
     const playerMap = useMemo(
         () =>
@@ -98,28 +90,7 @@ export const Chat = ({ gameId, playerId, players }) => {
     return (
         <Card className={classes.root}>
             <CardContent className={classes.content}>
-                {chats.map((chat, i) => {
-                    const player = get(playerMap, chat.playerId);
-
-                    return (
-                        <Typography
-                            key={`chat-${i}`}
-                            className={classNames(classes.pos, { [classes.system]: !player })}
-                            variant="caption"
-                        >
-                            {!!player && (
-                                <span className={classes.playerName}>{player.name}: </span>
-                            )}
-                            {chat.message}
-                        </Typography>
-                    );
-                })}
-                <div
-                    style={{ float: 'left', clear: 'both' }}
-                    ref={(el) => {
-                        this.messagesEnd = el;
-                    }}
-                />
+                <ChatContent classes={classes} playerMap={playerMap} gameId={gameId} />
             </CardContent>
             <CardActions>
                 <form className={classes.fullWidth} onSubmit={onSubmit}>
