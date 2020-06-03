@@ -29,3 +29,5 @@ aldeed:schema-deny
 accounts-base
 fourseven:scss
 mizzao:user-status
+accounts-password
+blindinglight:disconnected

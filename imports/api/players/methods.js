@@ -19,14 +19,10 @@ export const add = new ValidatedMethod({
         },
     }).validator(),
     run: ({ _id, name, gameId, isStoryteller = false, team = null }) => {
-        const user = Meteor.user();
-        console.log('Method - Players.add / run', user);
-
         const response = {
             success: false,
             message: 'There was some server error.',
         };
-
         const playerId = Players.upsert(
             { _id },
             {
@@ -38,6 +34,7 @@ export const add = new ValidatedMethod({
                 },
             }
         );
+
         Chats.insert({
             gameId,
             message: `${name} has joined the game!`,
@@ -47,6 +44,33 @@ export const add = new ValidatedMethod({
             response.success = true;
             response.message = 'Player added.';
             response.playerId = playerId.insertedId;
+        }
+
+        return response;
+    },
+});
+
+export const remove = new ValidatedMethod({
+    name: 'Players.remove',
+    validate: new SimpleSchema({
+        _id: {
+            type: String,
+            optional: true,
+        },
+    }).validator(),
+    run: ({ _id }) => {
+        const response = {
+            success: false,
+            message: 'There was some server error.',
+        };
+        const player = Players.findOne({ _id }, { fields: Players.publicFields });
+
+        if (player) {
+            Players.remove({ _id });
+            Chats.insert({ gameId: player.gameId, message: `${player.name} has left the game.` });
+
+            response.success = true;
+            response.message = 'Player removed.';
         }
 
         return response;

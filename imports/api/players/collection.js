@@ -26,6 +26,10 @@ Players.schema = new SimpleSchema({
         type: Boolean,
         defaultValue: false,
     },
+    isConnected: {
+        type: Boolean,
+        defaultValue: true,
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -57,6 +61,7 @@ Players.publicFields = {
     team: 1,
     isStoryteller: 1,
     isReady: 1,
+    isConnected: 1,
 };
 
 Players.attachSchema(Players.schema);

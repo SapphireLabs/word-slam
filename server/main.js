@@ -1,9 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { UserStatus } from 'meteor/mizzao:user-status';
 import '/imports/api';
+import '/imports/api/players/publish';
 
 Meteor.startup(() => {});
-
-UserStatus.events.on('connectionLogout', (fields) => {
-    console.log(fields);
-});

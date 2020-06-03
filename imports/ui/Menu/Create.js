@@ -1,7 +1,9 @@
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { get } from 'lodash';
+import { Disconnected } from 'meteor/blindinglight:disconnected';
 
+import { Connections } from '/imports/ui/core/subscriptions';
 import { add as addGame, Games } from '/imports/api/games';
 import { add as addPlayer } from '/imports/api/players';
 import { usePlayerState } from '/imports/ui/core/hooks';
@@ -20,6 +22,7 @@ export const Create = () => {
      */
     const onSubmit = (values) => {
         const accessCode = get(location, 'state.accessCode');
+        const playerId = get(player, '_id');
 
         if (accessCode) {
             // if joining
@@ -27,7 +30,7 @@ export const Create = () => {
 
             if (game) {
                 addPlayer.call(
-                    { _id: get(player, '_id'), name: values.name, gameId: game._id },
+                    { _id: playerId, name: values.name, gameId: game._id },
                     (error, response) => {
                         if (response.playerId) {
                             setPlayerId(response.playerId);
@@ -42,18 +45,19 @@ export const Create = () => {
             addGame.call({}, (_, { gameId }) => {
                 const game = Games.findOne({ _id: gameId }, { fields: Games.publicFields });
 
-                addPlayer.call(
-                    { _id: get(player, '_id'), name: values.name, gameId },
-                    (error, response) => {
-                        if (response.playerId) {
-                            setPlayerId(response.playerId);
-                        }
-                        history.push(`/games/${game.accessCode}`);
+                addPlayer.call({ _id: playerId, name: values.name, gameId }, (error, response) => {
+                    if (response.playerId) {
+                        setPlayerId(response.playerId);
                     }
-                );
+                    history.push(`/games/${game.accessCode}`);
+                });
             });
         }
     };
 
-    return <CreateForm onSubmit={onSubmit} />;
+    return (
+        <>
+            <CreateForm onSubmit={onSubmit} />
+        </>
+    );
 };

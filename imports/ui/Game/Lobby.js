@@ -93,7 +93,10 @@ export const Lobby = ({ game, player, players }) => {
                 Storyteller
             </div>
             {storyTeller ? (
-                <div className={classes.player}>{storyTeller.name}</div>
+                <div className={classes.player}>
+                    {storyTeller.name}
+                    {!storyTeller.isConnected ? '(Disconnected)' : ''}
+                </div>
             ) : (
                 <div>need a storyteller</div>
             )}
@@ -106,6 +109,7 @@ export const Lobby = ({ game, player, players }) => {
             {guessers.map((p, i) => (
                 <div key={`guesser-${i}`} className={classes.player}>
                     {p.name}
+                    {!p.isConnected ? '(Disconnected)' : ''}
                 </div>
             ))}
             <div
@@ -117,6 +121,7 @@ export const Lobby = ({ game, player, players }) => {
             {spectators.map((p, i) => (
                 <div key={`spectator-${i}`} className={classes.player}>
                     {p.name}
+                    {!p.isConnected ? '(Disconnected)' : ''}
                 </div>
             ))}
             {player.isStoryteller && (
