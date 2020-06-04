@@ -10,25 +10,23 @@ import { Round } from './Round';
 export const Game = () => {
     const { accessCode } = useParams();
     const { word, category } = useStoryWord();
-    const { isLoading, player, playerId } = usePlayerState();
-    const { game, players, rounds } = useGameState(accessCode);
+    const { isLoading: isPlayerLoading, player, playerId } = usePlayerState();
+    const { isLoading: isGameLoading, game, players, rounds, chats } = useGameState(accessCode);
+    const isLoading = isPlayerLoading || isGameLoading;
+    const isInvalid = !game || !playerId || !player || (player && game._id !== player.gameId);
 
     useEffect(() => {
-        if (playerId) {
+        if (!isLoading && !isInvalid) {
             Connections.assign(playerId);
         }
-    }, []);
+    }, [isLoading, isInvalid]);
 
-    if (!game || isLoading) {
+    if (isLoading) {
         return null;
     }
 
-    if (game && (!playerId || !player || (player && game._id !== player.gameId))) {
+    if (isInvalid) {
         return <Redirect to={{ pathname: '/', state: { accessCode } }} />;
-    }
-
-    if (!player) {
-        return null;
     }
 
     return (
@@ -44,7 +42,7 @@ export const Game = () => {
             ) : (
                 <Round game={game} player={player} players={players} rounds={rounds} />
             )}
-            <Chat gameId={game._id} playerId={player._id} players={players} />
+            <Chat chats={chats} gameId={game._id} playerId={player._id} players={players} />
         </>
     );
 };

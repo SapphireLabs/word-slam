@@ -7,20 +7,16 @@ import { Players, remove } from '/imports/api/players';
 const timeouts = {};
 
 Meteor.publish('_connections', function(data) {
-    console.log('Connected event: ', data, timeouts);
     if (data && get(timeouts, data)) {
         Players.update({ _id: data }, { $set: { isConnected: true } });
 
         clearTimeout(timeouts[data]);
         delete timeouts[data];
-        console.log('Reconnection', timeouts);
     }
 
     this._session.socket.on(
         'close',
         Meteor.bindEnvironment(() => {
-            console.log('Disconnection event: ', data);
-
             if (data) {
                 // set player to disconnected
                 Players.update({ _id: data }, { $set: { isConnected: false } });
@@ -30,7 +26,6 @@ Meteor.publish('_connections', function(data) {
                 }
                 timeouts[data] = setTimeout(
                     Meteor.bindEnvironment(() => {
-                        console.log('Delete player: ', data);
                         remove.call({ _id: data });
                         delete timeouts[data];
                     }),

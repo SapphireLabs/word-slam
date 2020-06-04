@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import { useTracker } from 'meteor/react-meteor-data';
 import Typography from '@material-ui/core/Typography';
 
-import { Chats } from '/imports/api/chats';
-
-export const ChatContent = ({ classes, playerMap, gameId }) => {
-    const chats = useTracker(() => Chats.find({ gameId }, { sort: { createdAt: 1 } }).fetch());
-
+export const ChatContent = ({ classes, chats, playerMap, gameId }) => {
     useEffect(() => {
         this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
     }, [chats]);

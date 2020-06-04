@@ -1,24 +1,24 @@
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
 
-import { Games } from '../../../api/games';
-import { Players } from '../../../api/players';
-import { Rounds } from '../../../api/rounds';
+import { Games } from '/imports/api/games';
 
 export const useGameState = (accessCode) => {
-    const gameSubscription = Meteor.subscribe('games');
+    return useTracker(() => {
+        const subscription = Meteor.subscribe('oneGame', accessCode);
+        const game = Games.findOne({ accessCode });
 
-    const game = useTracker(() => Games.findOne({ accessCode }, { fields: Games.publicFields }));
-    const players = useTracker(() =>
-        Players.find({ gameId: game && game._id }, { fields: Players.publicFields }).fetch()
-    );
-    const rounds = useTracker(() =>
-        Rounds.find({ gameId: game && game._id }, { fields: Rounds.publicFields }).fetch()
-    );
+        if (game) {
+            Meteor.subscribe('chats', game._id);
+            Meteor.subscribe('rounds', game._id);
+        }
 
-    return {
-        game,
-        players,
-        rounds,
-    };
+        return {
+            isLoading: !subscription.ready(),
+            game,
+            players: game && game.players().fetch(),
+            rounds: game && game.rounds().fetch(),
+            chats: game && game.chats().fetch(),
+        };
+    });
 };

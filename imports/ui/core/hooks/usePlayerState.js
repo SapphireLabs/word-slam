@@ -9,8 +9,8 @@ export const PLAYER_ID_KEY = 'word-slam-player-id';
 export const usePlayerState = () => {
     const [playerId, updatePlayerId] = useState(localStorage.getItem(PLAYER_ID_KEY));
     const [player, isLoading] = useTracker(() => {
-        const subscription = Meteor.subscribe('players');
-        const player = Players.findOne({ _id: playerId }, { fields: Players.publicFields });
+        const subscription = Meteor.subscribe('allPlayers');
+        const player = Players.findOne({ _id: playerId });
 
         return [player, !subscription.ready()];
     }, [playerId]);

@@ -1,6 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
+import { Players } from '/imports/api/players';
+import { Rounds } from '/imports/api/rounds';
+import { Chats } from '/imports/api/chats';
 import { generateAccessCode } from '/utils';
 
 export const Games = new Mongo.Collection('games');
@@ -13,7 +16,11 @@ Games.schema = new SimpleSchema({
         autoValue: function() {
             if (this.isInsert) {
                 let accessCode = generateAccessCode();
-                const used = new Set(Games.find().fetch().map(game => game.accessCode));
+                const used = new Set(
+                    Games.find()
+                        .fetch()
+                        .map((game) => game.accessCode)
+                );
 
                 while (used.has(accessCode)) {
                     accessCode = generateAccessCode();
@@ -59,3 +66,15 @@ Games.publicFields = {
 };
 
 Games.attachSchema(Games.schema);
+
+Games.helpers({
+    players() {
+        return Players.find({ gameId: this._id }, { fields: Players.publicFields });
+    },
+    rounds() {
+        return Rounds.find({ gameId: this._id }, { fields: Rounds.publicFields });
+    },
+    chats() {
+        return Chats.find({ gameId: this._id }, { fields: Chats.publicFields });
+    },
+});

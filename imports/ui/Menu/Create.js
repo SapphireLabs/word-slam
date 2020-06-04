@@ -1,15 +1,16 @@
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { get } from 'lodash';
-import { Disconnected } from 'meteor/blindinglight:disconnected';
 
-import { Connections } from '/imports/ui/core/subscriptions';
 import { add as addGame, Games } from '/imports/api/games';
 import { add as addPlayer } from '/imports/api/players';
 import { usePlayerState } from '/imports/ui/core/hooks';
 import { CreateForm } from './CreateForm';
 
 export const Create = () => {
+    Meteor.subscribe('allGames');
+    Meteor.subscribe('allPlayers');
     const { player, setPlayerId } = usePlayerState();
     const history = useHistory();
     const location = useLocation();
@@ -26,7 +27,7 @@ export const Create = () => {
 
         if (accessCode) {
             // if joining
-            const game = Games.findOne({ accessCode }, { fields: Games.publicFields });
+            const game = Games.findOne({ accessCode });
 
             if (game) {
                 addPlayer.call(
@@ -43,7 +44,7 @@ export const Create = () => {
         } else {
             // creating new game
             addGame.call({}, (_, { gameId }) => {
-                const game = Games.findOne({ _id: gameId }, { fields: Games.publicFields });
+                const game = Games.findOne({ _id: gameId });
 
                 addPlayer.call({ _id: playerId, name: values.name, gameId }, (error, response) => {
                     if (response.playerId) {

@@ -19,6 +19,7 @@ export const add = new ValidatedMethod({
         },
     }).validator(),
     run: ({ _id, name, gameId, isStoryteller = false, team = null }) => {
+        console.log('Method - Players.add / run', gameId);
         const response = {
             success: false,
             message: 'There was some server error.',

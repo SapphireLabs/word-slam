@@ -48,7 +48,7 @@ const useStyles = makeStyles({
     },
 });
 
-export const Chat = ({ gameId, playerId, players }) => {
+export const Chat = ({ chats, gameId, playerId, players }) => {
     const classes = useStyles();
     const [message, setMessage] = useState('');
 
@@ -92,7 +92,12 @@ export const Chat = ({ gameId, playerId, players }) => {
     return (
         <Card className={classes.root}>
             <CardContent className={classes.content}>
-                <ChatContent classes={classes} playerMap={playerMap} gameId={gameId} />
+                <ChatContent
+                    classes={classes}
+                    chats={chats}
+                    playerMap={playerMap}
+                    gameId={gameId}
+                />
             </CardContent>
             <CardActions>
                 <form className={classes.fullWidth} onSubmit={onSubmit}>
