@@ -40,20 +40,19 @@ export const Create = () => {
                     }
                 );
             }
-            // TODO: handle joining invalid game
-        } else {
-            // creating new game
-            addGame.call({}, (_, { gameId }) => {
-                const game = Games.findOne({ _id: gameId });
-
-                addPlayer.call({ _id: playerId, name: values.name, gameId }, (error, response) => {
-                    if (response.playerId) {
-                        setPlayerId(response.playerId);
-                    }
-                    history.push(`/games/${game.accessCode}`);
-                });
-            });
         }
+
+        // create new game
+        addGame.call({}, (_, { gameId }) => {
+            const game = Games.findOne({ _id: gameId });
+
+            addPlayer.call({ _id: playerId, name: values.name, gameId }, (error, response) => {
+                if (response.playerId) {
+                    setPlayerId(response.playerId);
+                }
+                history.push(`/games/${game.accessCode}`);
+            });
+        });
     };
 
     return (

@@ -17,7 +17,7 @@ export const Game = () => {
 
     useEffect(() => {
         if (!isLoading && !isInvalid) {
-            Connections.assign(playerId);
+            Connections.assign({ playerId, gameId: game._id });
         }
     }, [isLoading, isInvalid]);
 

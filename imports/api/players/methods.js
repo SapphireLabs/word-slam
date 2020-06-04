@@ -2,6 +2,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
 import { Players } from './collection';
+import { Games } from '../games';
 import { Chats } from '../chats';
 
 export const add = new ValidatedMethod({
@@ -68,7 +69,17 @@ export const remove = new ValidatedMethod({
 
         if (player) {
             Players.remove({ _id });
-            Chats.insert({ gameId: player.gameId, message: `${player.name} has left the game.` });
+
+            const other = Players.findOne({ gameId: player.gameId });
+
+            if (other) {
+                Chats.insert({
+                    gameId: player.gameId,
+                    message: `${player.name} has left the game.`,
+                });
+            } else {
+                Games.remove({ _id: player.gameId });
+            }
 
             response.success = true;
             response.message = 'Player removed.';
