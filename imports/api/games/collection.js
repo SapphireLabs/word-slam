@@ -36,6 +36,10 @@ Games.schema = new SimpleSchema({
         type: String,
         defaultValue: 'WAITING',
     },
+    isSingleTeam: {
+        type: Boolean,
+        defaultValue: false,
+    },
     createdAt: {
         type: Date,
         autoValue: function() {

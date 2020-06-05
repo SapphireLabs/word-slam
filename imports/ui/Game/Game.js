@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 
-import { usePlayerState, useGameState, useStoryWord } from '/imports/ui/core/hooks';
+import { usePlayerState, useGameState } from '/imports/ui/core/hooks';
+import { GameContext } from '/imports/ui/core/context';
 import { Connections } from '/imports/ui/core/subscriptions';
 import { Chat } from '/imports/ui/Chat';
+
 import { Lobby } from './Lobby';
 import { Round } from './Round';
 
 export const Game = () => {
     const { accessCode } = useParams();
-    const { word, category } = useStoryWord();
     const { isLoading: isPlayerLoading, player, playerId } = usePlayerState();
     const { isLoading: isGameLoading, game, players, rounds, chats } = useGameState(accessCode);
     const isLoading = isPlayerLoading || isGameLoading;
@@ -30,19 +31,21 @@ export const Game = () => {
     }
 
     return (
-        <>
+        <GameContext.Provider
+            value={{
+                game,
+                currentPlayer: player,
+                playersInGame: players,
+                rounds,
+                chats,
+            }}
+        >
             {game.status === 'WAITING' ? (
-                <Lobby
-                    game={game}
-                    player={player}
-                    players={players}
-                    word={word}
-                    category={category}
-                />
+                <Lobby />
             ) : (
                 <Round game={game} player={player} players={players} rounds={rounds} />
             )}
             <Chat chats={chats} gameId={game._id} playerId={player._id} players={players} />
-        </>
+        </GameContext.Provider>
     );
 };

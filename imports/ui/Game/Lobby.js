@@ -1,21 +1,25 @@
 import React, { useMemo } from 'react';
-import T from 'prop-types';
 import classNames from 'classnames';
 import copy from 'copy-to-clipboard';
+import { Button } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { Players } from '/imports/api/players';
 import { Games } from '/imports/api/games';
 import { Rounds } from '/imports/api/rounds';
 import { useStyles, useStoryWord } from '/imports/ui/core/hooks';
-import { StorySelect } from './StorySelect';
+import { useGameContext } from '/imports/ui/core/context';
+import { playerTypes } from '/utils/constants';
 
-const Status = ({ game, player }) => {
+import { StorySelect } from './StorySelect';
+import { PlayerList } from './PlayerList';
+
+const Status = ({ game, currentPlayer }) => {
     const classes = useStyles();
 
     return (
         <div className={classNames(classes.containerCenter, classes.grey)}>
-            {player.isStoryteller ? (
+            {currentPlayer.isStoryteller ? (
                 <>
                     <h3>You're the storyteller!</h3>
                     <h5>Pick a category and story word and then start the round.</h5>
@@ -27,48 +31,48 @@ const Status = ({ game, player }) => {
     );
 };
 
-export const Lobby = ({ game, player, players }) => {
+export const Lobby = () => {
     const classes = useStyles();
+    const { game, currentPlayer, playersInGame } = useGameContext();
     const wordProps = useStoryWord();
-    const { word, trueCategory } = wordProps;
-    const { storyTeller, guessers, spectators } = useMemo(
+
+    // filter players into their roles
+    const { storyTellers, players, unassigned } = useMemo(
         () =>
-            players.reduce(
+            playersInGame.reduce(
                 (res, p) => {
                     if (!p.team) {
-                        res.spectators.push(p);
+                        res.unassigned.push(p);
 
                         return res;
                     }
                     if (p.isStoryteller) {
-                        res.storyTeller = p;
+                        res.storyTellers.push(p);
                     } else {
-                        res.guessers.push(p);
+                        res.players.push(p);
                     }
 
                     return res;
                 },
-                { guessers: [], spectators: [] }
+                { storyTellers: [], players: [], unassigned: [] }
             ),
-        [players]
+        [playersInGame]
     );
 
     const onClickStoryteller = () => {
-        if (!storyTeller) {
-            Players.update({ _id: player._id }, { $set: { isStoryteller: true, team: 'B' } });
-        }
+        Players.update({ _id: currentPlayer._id }, { $set: { isStoryteller: true, team: 'B' } });
     };
 
-    const onClickGuesser = () => {
-        Players.update({ _id: player._id }, { $set: { isStoryteller: false, team: 'B' } });
-    };
-
-    const onClickSpectator = () => {
-        Players.update({ _id: player._id }, { $set: { isStoryteller: false, team: null } });
+    const onClickPlayer = () => {
+        Players.update({ _id: currentPlayer._id }, { $set: { isStoryteller: false, team: 'B' } });
     };
 
     const onClickStart = () => {
-        Rounds.insert({ gameId: game._id, word, category: trueCategory.label });
+        Rounds.insert({
+            gameId: game._id,
+            word: wordProps.word,
+            category: wordProps.trueCategory.label,
+        });
         Games.update({ _id: game._id }, { $set: { status: 'IN_PROGRESS' } });
     };
 
@@ -84,57 +88,54 @@ export const Lobby = ({ game, player, players }) => {
                     <FileCopyOutlinedIcon />
                 </div>
             </h3>
-            <Status game={game} player={player} />
-            {player.isStoryteller && <StorySelect {...wordProps} />}
+            <Status game={game} currentPlayer={currentPlayer} />
+
+            {currentPlayer.isStoryteller && <StorySelect {...wordProps} />}
+
+            {!!unassigned.length && (
+                <>
+                    <div className={classNames(classes.player, classes.header, classes.pointer)}>
+                        Unassigned
+                    </div>
+                    <PlayerList
+                        players={unassigned}
+                        type={playerTypes.UNASSIGNED}
+                        playerClass={classes.player}
+                    />
+                </>
+            )}
+
             <div
                 className={classNames(classes.player, classes.header, classes.pointer)}
                 onClick={onClickStoryteller}
             >
                 Storyteller
             </div>
-            {storyTeller ? (
-                <div className={classes.player}>
-                    {storyTeller.name}
-                    {!storyTeller.isConnected ? '(Disconnected)' : ''}
-                </div>
-            ) : (
-                <div>need a storyteller</div>
-            )}
+            <PlayerList
+                players={storyTellers}
+                type={playerTypes.STORYTELLER}
+                playerClass={classes.player}
+            />
+
             <div
                 className={classNames(classes.player, classes.header, classes.pointer)}
-                onClick={onClickGuesser}
+                onClick={onClickPlayer}
             >
-                Guessers
+                Players
             </div>
-            {guessers.map((p, i) => (
-                <div key={`guesser-${i}`} className={classes.player}>
-                    {p.name}
-                    {!p.isConnected ? '(Disconnected)' : ''}
-                </div>
-            ))}
-            <div
-                className={classNames(classes.player, classes.header, classes.pointer)}
-                onClick={onClickSpectator}
-            >
-                Spectators
-            </div>
-            {spectators.map((p, i) => (
-                <div key={`spectator-${i}`} className={classes.player}>
-                    {p.name}
-                    {!p.isConnected ? '(Disconnected)' : ''}
-                </div>
-            ))}
-            {player.isStoryteller && (
-                <button disabled={!guessers.length} onClick={onClickStart}>
+            <PlayerList players={players} type={playerTypes.PLAYER} playerClass={classes.player} />
+
+            {currentPlayer.isStoryteller && (
+                <Button
+                    className={classes.button}
+                    variant="contained"
+                    color="primary"
+                    disabled={!players.length}
+                    onClick={onClickStart}
+                >
                     Start
-                </button>
+                </Button>
             )}
         </div>
     );
-};
-
-Lobby.propTypes = {
-    game: T.object.isRequired,
-    player: T.object.isRequired,
-    players: T.arrayOf(T.object),
 };

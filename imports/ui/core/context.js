@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
 
-export const PlayerContext = createContext(null);
+export const GameContext = createContext(null);
 
-export const usePlayerContext = () => useContext(PlayerContext);
+export const useGameContext = () => useContext(GameContext);
