@@ -35,6 +35,10 @@ export const useStyles = makeStyles((_) => ({
     },
     pointer: {
         cursor: 'pointer',
+        '&:hover': {
+            boxShadow: `1px 1px 5px ${grey[400]}`,
+            // transition: 'all .2s ease-in',
+        },
     },
     marginLeft8: {
         marginLeft: 8,

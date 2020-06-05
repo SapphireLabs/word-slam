@@ -1,10 +1,13 @@
 import React from 'react';
+import { get } from 'lodash';
 import Select from 'react-select';
 import Button from '@material-ui/core/Button';
 import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { useStoryWord } from '/imports/ui/core/hooks';
+import { useGameContext } from '/imports/ui/core/context';
+import { stories } from '/utils/fixtures';
+import { generateWord } from '/utils/game';
 
 export const useStyles = makeStyles({
     container: {
@@ -23,10 +26,20 @@ export const useStyles = makeStyles({
     },
 });
 
-export const StorySelect = ({ options, category, setCategory, word, generateWord }) => {
-    const classes = useStyles();
+const toOption = (val) => ({ label: val, value: val });
+const options = [...Object.keys(stories).map(toOption), { label: 'Random', value: 'Random' }];
 
-    const onChange = (val) => setCategory(val);
+export const StorySelect = () => {
+    const classes = useStyles();
+    const { currentRound } = useGameContext();
+
+    const onChange = (category) => {
+        generateWord(currentRound, category);
+    };
+
+    const onClick = () => {
+        generateWord(currentRound);
+    };
 
     return (
         <>
@@ -35,15 +48,15 @@ export const StorySelect = ({ options, category, setCategory, word, generateWord
                     className={classes.select}
                     isSearchable
                     options={options}
-                    value={category}
+                    value={get(currentRound, 'category')}
                     onChange={onChange}
                 />
-                <Button size="small" variant="outlined" onClick={generateWord}>
+                <Button size="small" variant="outlined" onClick={onClick}>
                     Get new word
                 </Button>
             </div>
             <h4>
-                <span className={classes.sub}>Story word:</span> {word}
+                <span className={classes.sub}>Story word:</span> {get(currentRound, 'word')}
             </h4>
         </>
     );

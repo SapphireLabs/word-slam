@@ -5,6 +5,7 @@ import { usePlayerState, useGameState } from '/imports/ui/core/hooks';
 import { GameContext } from '/imports/ui/core/context';
 import { Connections } from '/imports/ui/core/subscriptions';
 import { Chat } from '/imports/ui/Chat';
+import { statuses } from '/utils/constants';
 
 import { Lobby } from './Lobby';
 import { Round } from './Round';
@@ -15,6 +16,7 @@ export const Game = () => {
     const { isLoading: isGameLoading, game, players, rounds, chats } = useGameState(accessCode);
     const isLoading = isPlayerLoading || isGameLoading;
     const isInvalid = !game || !playerId || !player || (player && game._id !== player.gameId);
+    const currentRound = rounds && rounds.find((r) => r.status !== statuses.COMPLETED);
 
     useEffect(() => {
         if (!isLoading && !isInvalid) {
@@ -37,6 +39,7 @@ export const Game = () => {
                 currentPlayer: player,
                 playersInGame: players,
                 rounds,
+                currentRound,
                 chats,
             }}
         >

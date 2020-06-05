@@ -7,6 +7,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import { add as addGame, Games } from '/imports/api/games';
 import { add as addPlayer } from '/imports/api/players';
+import { add as addRound } from '/imports/api/rounds';
 import { usePlayerState } from '/imports/ui/core/hooks';
 import { CreateForm } from './CreateForm';
 
@@ -46,6 +47,7 @@ export const Create = () => {
             addGame.call({}, (_, { gameId }) => {
                 const game = Games.findOne({ _id: gameId });
 
+                addRound.call({ gameId });
                 addPlayer.call({ _id: playerId, name: values.name, gameId }, (error, response) => {
                     if (response.playerId) {
                         setPlayerId(response.playerId);

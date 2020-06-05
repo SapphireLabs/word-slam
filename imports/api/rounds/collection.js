@@ -1,6 +1,8 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
+import { getCategory } from './methods';
+
 export const Rounds = new Mongo.Collection('rounds');
 
 Rounds.schema = new SimpleSchema({
@@ -13,7 +15,8 @@ Rounds.schema = new SimpleSchema({
     hiddenWord: {
         type: Array,
         autoValue: function(data) {
-            if (this.isInsert) {
+            // when creating a new round, or generating a new word
+            if (this.isInsert || (this.isUpdate && data.word && !data.hiddenWord)) {
                 return data.word.split('').map((c) => !c.match(/[a-z0-9]/i));
             }
         },
@@ -22,6 +25,22 @@ Rounds.schema = new SimpleSchema({
         type: Boolean,
     },
     category: {
+        type: Object,
+        autoValue: function(data) {
+            // when inserting initially, or choosing the random option, replace
+            // this value with the "true category" instead of random
+            if (this.isInsert || (this.isUpdate && data.word && data.category.value === 'Random')) {
+                return {
+                    label: getCategory(data.word),
+                    value: 'Random',
+                };
+            }
+        },
+    },
+    'category.label': {
+        type: String,
+    },
+    'category.value': {
         type: String,
     },
     team: {

@@ -67,6 +67,7 @@ Games.schema = new SimpleSchema({
 Games.publicFields = {
     accessCode: 1,
     status: 1,
+    isSingleTeam: 1,
 };
 
 Games.attachSchema(Games.schema);
