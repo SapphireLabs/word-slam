@@ -3,12 +3,56 @@ import SimpleSchema from 'simpl-schema';
 
 export const Players = new Mongo.Collection('players');
 
+const playerStatsType = new SimpleSchema({
+    teamRoundsPlayed: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    teamRoundsWon: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    teamRoundsAsStoryteller: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    teamRoundsWonAsStoryteller: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    singleRoundsPlayed: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    singleRoundsWon: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    singleRoundsAsStoryteller: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    wordsGuessed: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+    },
+    totGuessSecs: {
+        type: Number,
+        defaultValue: 0,
+    },
+    totStorytellerSecs: {
+        type: Number,
+        defaultValue: 0,
+    },
+});
+
 Players.schema = new SimpleSchema({
     name: {
         type: String,
     },
     gameId: {
         type: String,
+        optional: true,
     },
     userId: {
         type: String,
@@ -29,6 +73,10 @@ Players.schema = new SimpleSchema({
     isConnected: {
         type: Boolean,
         defaultValue: true,
+    },
+    stats: {
+        type: playerStatsType,
+        defaultValue: {},
     },
     createdAt: {
         type: Date,
@@ -62,6 +110,7 @@ Players.publicFields = {
     isStoryteller: 1,
     isReady: 1,
     isConnected: 1,
+    stats: 1,
 };
 
 Players.attachSchema(Players.schema);

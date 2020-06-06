@@ -1,9 +1,38 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { get } from 'lodash';
+
+import { statuses } from '/utils/constants';
 
 import { getCategory } from './methods';
 
 export const Rounds = new Mongo.Collection('rounds');
+
+const clueType = new SimpleSchema({
+    label: {
+        type: String,
+    },
+    category: {
+        type: String,
+    },
+});
+
+const clueListType = new SimpleSchema({
+    Blue: {
+        type: Array,
+        defaultValue: new Array(8).fill(null),
+    },
+    'Blue.$': {
+        type: clueType,
+    },
+    Red: {
+        type: Array,
+        defaultValue: new Array(8).fill(null),
+    },
+    'Red.$': {
+        type: clueType,
+    },
+});
 
 Rounds.schema = new SimpleSchema({
     gameId: {
@@ -16,8 +45,13 @@ Rounds.schema = new SimpleSchema({
         type: Array,
         autoValue: function(data) {
             // when creating a new round, or generating a new word
-            if (this.isInsert || (this.isUpdate && data.word && !data.hiddenWord)) {
-                return data.word.split('').map((c) => !c.match(/[a-z0-9]/i));
+            if (
+                this.isInsert ||
+                (this.isUpdate && get(data, '$set.word') && !get(data, '$set.hiddenWord'))
+            ) {
+                return (get(data, 'word') || get(data, '$set.word'))
+                    .split('')
+                    .map((c) => !c.match(/[a-z0-9]/i));
             }
         },
     },
@@ -29,9 +63,14 @@ Rounds.schema = new SimpleSchema({
         autoValue: function(data) {
             // when inserting initially, or choosing the random option, replace
             // this value with the "true category" instead of random
-            if (this.isInsert || (this.isUpdate && data.word && data.category.value === 'Random')) {
+            if (
+                this.isInsert ||
+                (this.isUpdate &&
+                    get(data, '$set.word') &&
+                    get(data, '$set.category.value') !== 'Random')
+            ) {
                 return {
-                    label: getCategory(data.word),
+                    label: getCategory(get(data, 'word', get(data, '$set.word'))),
                     value: 'Random',
                 };
             }
@@ -49,24 +88,23 @@ Rounds.schema = new SimpleSchema({
     },
     status: {
         type: String,
-        defaultValue: 'IN_PROGRESS',
+        defaultValue: 'WAITING',
     },
     winnerId: {
         type: String,
         optional: true,
     },
+    winnerTeam: {
+        type: String,
+        optional: true,
+    },
+    isSingleTeam: {
+        type: Boolean,
+        optional: true,
+    },
     clues: {
-        type: Array,
-        defaultValue: new Array(8).fill(null),
-    },
-    'clues.$': {
-        type: Object,
-    },
-    'clues.$.label': {
-        type: String,
-    },
-    'clues.$.category': {
-        type: String,
+        type: clueListType,
+        defaultValue: {},
     },
     createdAt: {
         type: Date,
@@ -90,6 +128,16 @@ Rounds.schema = new SimpleSchema({
         denyInsert: true,
         optional: true,
     },
+    startedAt: {
+        type: Date,
+        autoValue: function(data) {
+            if (this.isUpdate && get(data, '$set.status') === statuses.IN_PROGRESS) {
+                return new Date();
+            }
+        },
+        denyInsert: true,
+        optional: true,
+    },
 });
 
 Rounds.publicFields = {
@@ -100,8 +148,10 @@ Rounds.publicFields = {
     category: 1,
     status: 1,
     winnerId: 1,
+    winnerTeam: 1,
     clues: 1,
     updatedAt: 1,
+    startedAt: 1,
 };
 
 Rounds.attachSchema(Rounds.schema);

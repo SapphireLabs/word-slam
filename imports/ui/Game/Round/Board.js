@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classNames from 'classnames';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 import { useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Slot = ({ idx, round }) => {
+const Slot = ({ idx, round, currentPlayer }) => {
     const { _id, clues } = round;
     const classes = useStyles();
     const [{ isOver }, dropRef] = useDrop({
@@ -36,7 +36,7 @@ const Slot = ({ idx, round }) => {
                 { _id },
                 {
                     $set: {
-                        [`clues.${idx}`]: pick(item, ['label', 'category']),
+                        [`clues.${currentPlayer.team}.${idx}`]: pick(item, ['label', 'category']),
                     },
                 }
             );
@@ -45,15 +45,16 @@ const Slot = ({ idx, round }) => {
             isOver: !!monitor.isOver(),
         }),
     });
+    const clue = get(clues, `${currentPlayer.team}.${idx}`);
 
     return (
         <Paper ref={dropRef} className={classNames(classes.paper, { [classes.isOver]: isOver })}>
-            {clues[idx] ? clues[idx].label : ''}
+            {get(clue, 'label', '')}
         </Paper>
     );
 };
 
-export const Board = ({ round }) => {
+export const Board = (props) => {
     const classes = useStyles();
 
     return (
@@ -63,7 +64,7 @@ export const Board = ({ round }) => {
                     <Grid key={`grid-${i}`} container item xs={12} spacing={2}>
                         {[...Array(4)].map((_, j) => (
                             <Grid key={`grid-${i}-${j}`} item xs={3}>
-                                <Slot idx={i * 4 + j} round={round} />
+                                <Slot idx={i * 4 + j} {...props} />
                             </Grid>
                         ))}
                     </Grid>

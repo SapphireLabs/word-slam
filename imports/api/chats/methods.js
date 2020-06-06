@@ -1,8 +1,9 @@
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
 import { Chats } from './collection';
-import { Players } from '../players';
+import { Players, updateStats } from '../players';
 import { Rounds } from '../rounds';
+import { Games } from '../games';
 
 export const add = new ValidatedMethod({
     name: 'Chats.add',
@@ -23,9 +24,11 @@ export const add = new ValidatedMethod({
         const response = {
             success: false,
             message: 'There was some server error.',
+            isRoundComplete: false,
         };
 
         const player = Players.findOne({ _id: playerId });
+        const game = Games.findOne({ _id: gameId });
         // save player details in chat object so we have it even if player leaves game
         const _id = Chats.insert({
             message,
@@ -35,11 +38,7 @@ export const add = new ValidatedMethod({
             team: player.team,
         });
 
-        const currentRound = Rounds.findOne(
-            { gameId, status: 'IN_PROGRESS' },
-            { fields: Rounds.publicFields }
-        );
-        let isRoundComplete = false;
+        const currentRound = Rounds.findOne({ gameId, status: 'IN_PROGRESS' });
 
         if (currentRound) {
             console.log('Method - Chats.add / guess');
@@ -47,6 +46,7 @@ export const add = new ValidatedMethod({
 
             if (!player.isStoryteller && player.team && word.length === message.length) {
                 if (word.match(new RegExp(message, 'i'))) {
+                    updateStats(game, player, currentRound);
                     Chats.insert({
                         gameId,
                         message: `${player.name} has guessed the word!`,
@@ -57,10 +57,12 @@ export const add = new ValidatedMethod({
                             $set: {
                                 status: 'COMPLETED',
                                 winnerId: playerId,
+                                winnerTeam: player.team,
+                                isSingleTeam: game.isSingleTeam,
                             },
                         }
                     );
-                    isRoundComplete = true;
+                    response.isRoundComplete = true;
                 }
             }
         }
@@ -69,7 +71,6 @@ export const add = new ValidatedMethod({
             response.success = true;
             response.message = 'Chat added.';
             response.gameId = _id;
-            response.isRoundComplete = isRoundComplete;
         }
 
         return response;

@@ -1,5 +1,6 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import moment from 'moment';
 
 import { Players } from './collection';
 import { Games } from '../games';
@@ -52,6 +53,9 @@ export const add = new ValidatedMethod({
     },
 });
 
+/**
+ * Removes a player from a game. Deletes the game if empty.
+ */
 export const remove = new ValidatedMethod({
     name: 'Players.remove',
     validate: new SimpleSchema({
@@ -68,7 +72,8 @@ export const remove = new ValidatedMethod({
         const player = Players.findOne({ _id }, { fields: Players.publicFields });
 
         if (player) {
-            Players.remove({ _id });
+            // disassociate but keep player object for stats
+            Players.update({ _id }, { $set: { gameId: null } });
 
             const other = Players.findOne({ gameId: player.gameId });
 
@@ -88,3 +93,108 @@ export const remove = new ValidatedMethod({
         return response;
     },
 });
+
+export const updateStats = (game, currentPlayer, round, guessed = true) => {
+    const roundSecs = moment().diff(moment(round.startedAt), 'seconds');
+
+    const getStoryTellerUpdate = (guessed) =>
+        !game.isSingleTeam
+            ? {
+                  $inc: {
+                      'stats.teamRoundsAsStoryteller': 1,
+                      'stats.teamRoundsWonAsStoryteller': guessed ? 1 : 0,
+                      'stats.totStorytellerSecs': roundSecs,
+                  },
+              }
+            : {
+                  $inc: {
+                      'stats.singleRoundsAsStoryteller': 1,
+                      'stats.totStorytellerSecs': roundSecs,
+                  },
+              };
+
+    const getPlayerUpdate = (won, guessed) =>
+        !game.isSingleTeam
+            ? {
+                  $inc: {
+                      'stats.teamRoundsPlayed': 1,
+                      'stats.teamRoundsWon': won ? 1 : 0,
+                      'stats.wordsGuessed': guessed ? 1 : 0,
+                      'stats.totGuessSecs': guessed ? roundSecs : 0,
+                  },
+              }
+            : {
+                  $inc: {
+                      'stats.singleRoundsPlayed': 1,
+                      'stats.singleRoundsWon': guessed ? 1 : 0,
+                      'stats.wordsGuessed': guessed ? 1 : 0,
+                      'stats.totGuessSecs': guessed ? roundSecs : 0,
+                  },
+              };
+
+    // update blue team
+    // update red team
+    // update storyteller
+    Players.update(
+        {
+            gameId: game._id,
+            isStoryteller: true,
+            team: currentPlayer.team,
+        },
+        getStoryTellerUpdate(guessed),
+        { multi: true }
+    );
+    Players.update(
+        {
+            gameId: game._id,
+            isStoryteller: true,
+            team: { $ne: currentPlayer.team },
+        },
+        getStoryTellerUpdate(false),
+        { multi: true }
+    );
+
+    // if no one guessed the word
+    if (!guessed) {
+        Players.update({ gameId: game._id, isStoryteller: false }, getPlayerUpdate(false, false), {
+            multi: true,
+        });
+
+        return;
+    }
+
+    // update guesser
+    Players.update(
+        {
+            gameId: game._id,
+            isStoryteller: false,
+            _id: currentPlayer._id,
+        },
+        getPlayerUpdate(true, true)
+    );
+
+    // update others on guesser team
+    Players.update(
+        {
+            gameId: game._id,
+            isStoryteller: false,
+            team: currentPlayer.team,
+            _id: { $ne: currentPlayer._id },
+        },
+        getPlayerUpdate(true, false),
+        { multi: true }
+    );
+
+    if (!game.isSingleTeam) {
+        // update others not on winner team
+        Players.update(
+            {
+                gameId: game._id,
+                isStoryteller: false,
+                team: { $ne: currentPlayer.team },
+            },
+            getPlayerUpdate(false, false),
+            { multi: true }
+        );
+    }
+};

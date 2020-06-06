@@ -5,6 +5,7 @@ import { Button, Tooltip } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { Games } from '/imports/api/games';
+import { Rounds } from '/imports/api/rounds';
 import { useStyles } from '/imports/ui/core/hooks';
 import { useGameContext } from '/imports/ui/core/context';
 import { playerTypes, teams, statuses } from '/utils/constants';
@@ -24,7 +25,7 @@ const renderGameStatusMessages = (messages) => (
 
 export const Lobby = () => {
     const classes = useStyles();
-    const { game, currentPlayer, playersInGame } = useGameContext();
+    const { game, currentPlayer, currentRound, playersInGame } = useGameContext();
     const unassigned = useMemo(() => playersInGame.filter((p) => !p.team), [playersInGame]);
     const gameStatusMessages = useMemo(() => {
         const messages = [];
@@ -49,6 +50,7 @@ export const Lobby = () => {
 
     const onClickStart = () => {
         Games.update({ _id: game._id }, { $set: { status: statuses.IN_PROGRESS } });
+        Rounds.update({ _id: currentRound._id }, { $set: { status: statuses.IN_PROGRESS } });
     };
 
     return (

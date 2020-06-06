@@ -37,7 +37,7 @@ export const Round = () => {
                                   .map((show, i) => (show ? currentRound.word[i] + ' ' : '_ '))
                                   .join('')}
                     </h2>
-                    <Board round={currentRound} />
+                    <Board round={currentRound} currentPlayer={currentPlayer} />
                     {currentPlayer.isStoryteller && (
                         <>
                             <h3>Clues</h3>
@@ -54,7 +54,7 @@ export const Round = () => {
                     )}
                 </>
             )}
-            {latestRound && (
+            {!currentRound && latestRound && (
                 <>
                     <h2>The word was: {get(latestRound, 'word')}</h2>
                     <h2>Returning to lobby in {timer}...</h2>

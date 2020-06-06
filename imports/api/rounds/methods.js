@@ -77,7 +77,6 @@ export const updateWord = new ValidatedMethod({
             response.success = true;
             response.message = 'Round word updated.';
         }
-        console.log(roundId);
 
         return response;
     },
