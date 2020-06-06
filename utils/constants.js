@@ -1,5 +1,6 @@
 export const itemTypes = {
     CLUE: 'CLUE',
+    SLOT: 'SLOT',
 };
 
 export const playerTypes = {

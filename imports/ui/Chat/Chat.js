@@ -9,9 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { red, blue, green, grey } from '@material-ui/core/colors';
 
-import { add as addRound } from '/imports/api/rounds';
 import { add as addChat } from '/imports/api/chats';
-import { Games } from '/imports/api/games';
 import { ChatContent } from './ChatContent';
 
 const useStyles = makeStyles({
@@ -75,24 +73,7 @@ export const Chat = ({ chats, gameId, playerId, players }) => {
         e.preventDefault();
 
         if (message.trim()) {
-            addChat.call(
-                { gameId, playerId, message: message.trim() },
-                (_, { isRoundComplete }) => {
-                    // if (isRoundComplete) {
-                    //     Meteor.setTimeout(() => {
-                    //         addRound.call({ gameId });
-                    //         Games.update(
-                    //             { _id: gameId },
-                    //             {
-                    //                 $set: {
-                    //                     status: 'WAITING',
-                    //                 },
-                    //             }
-                    //         );
-                    //     }, 5000);
-                    // }
-                }
-            );
+            addChat.call({ gameId, playerId, message: message.trim() });
             setMessage('');
         }
     };

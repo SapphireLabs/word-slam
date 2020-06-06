@@ -24,7 +24,6 @@ export const Round = () => {
     const roundClasses = useRoundStyles();
     const { currentPlayer, currentRound } = useGameContext();
     useRoundTimer();
-    console.log(currentPlayer.view);
 
     return (
         <div>

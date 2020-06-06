@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { get, pick } from 'lodash';
-import { useDrop } from 'react-dnd';
+import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -24,33 +24,65 @@ const useStyles = makeStyles((theme) => ({
     isOver: {
         backgroundColor: green[200],
     },
+    draggableSlot: {
+        cursor: 'move',
+    },
 }));
 
 const Slot = ({ idx, round, currentPlayer }) => {
     const { _id, clues } = round;
     const classes = useStyles();
     const [{ isOver }, dropRef] = useDrop({
-        accept: itemTypes.CLUE,
+        accept: [itemTypes.CLUE, itemTypes.SLOT],
         drop: (item) => {
-            Rounds.update(
-                { _id },
-                {
-                    $set: {
-                        [`clues.${currentPlayer.team}.${idx}`]: pick(item, ['label', 'category']),
-                    },
-                }
-            );
+            if (item.type === itemTypes.CLUE) {
+                Rounds.update(
+                    { _id },
+                    {
+                        $set: {
+                            [`clues.${currentPlayer.team}.${idx}`]: pick(item, [
+                                'label',
+                                'category',
+                            ]),
+                        },
+                    }
+                );
+            } else if (item.type === itemTypes.SLOT && item.idx !== idx) {
+                Rounds.update(
+                    { _id },
+                    {
+                        $set: {
+                            [`clues.${currentPlayer.team}.${idx}`]: item.clue,
+                            [`clues.${currentPlayer.team}.${item.idx}`]: null,
+                        },
+                    }
+                );
+            }
         },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     });
     const clue = get(clues, `${currentPlayer.team}.${idx}`);
+    const [{ isDragging }, dragRef] = useDrag({
+        item: { clue, type: itemTypes.SLOT, idx, team: currentPlayer.team },
+        collect: (monitor) => ({
+            isDragging: !!monitor.isDragging(),
+        }),
+    });
 
-    return (
+    const renderSlot = () => (
         <Paper ref={dropRef} className={classNames(classes.paper, { [classes.isOver]: isOver })}>
             {get(clue, 'label', '')}
         </Paper>
+    );
+
+    return clue ? (
+        <span className={classes.draggableSlot} ref={dragRef}>
+            {renderSlot()}
+        </span>
+    ) : (
+        renderSlot()
     );
 };
 

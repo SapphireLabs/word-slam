@@ -31,6 +31,7 @@ export const useRoundTimer = () => {
 
                 if (hidden.length === 1) {
                     // end round
+                    // TODO: use new game end stuff
                     updateStats(game, currentPlayer, currentRound, false);
                     Rounds.update(
                         { _id: currentRound._id },
