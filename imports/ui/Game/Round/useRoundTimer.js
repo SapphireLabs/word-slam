@@ -9,20 +9,20 @@ import { useGameContext } from '/imports/ui/core/context';
 import { statuses } from '/utils/constants';
 
 export const useRoundTimer = () => {
-    const { currentPlayer, currentRound, game, rounds } = useGameContext;
+    const { currentPlayer = {}, currentRound = {}, game, rounds = [] } = useGameContext;
     let [timer, setTimer] = useState(5);
     const latestRound = useMemo(
         () =>
             rounds
                 .filter((r) => r.status === statuses.COMPLETED)
-                .reduce((max, r) => (r.updatedAt > max.updatedAt ? r : max)),
+                .reduce((max, r) => (!max || r.updatedAt > max.updatedAt ? r : max), null),
         [rounds]
     );
 
     // Show new letter every 10 seconds
     useEffect(() => {
         let interval;
-        if (currentPlayer.isStoryteller && currentRound && currentRound.hiddenWord) {
+        if (currentPlayer.isStoryteller && currentRound.hiddenWord) {
             interval = setInterval(() => {
                 const hidden = currentRound.hiddenWord.reduce((acc, show, i) => {
                     if (!show) {
@@ -78,5 +78,5 @@ export const useRoundTimer = () => {
         return () => clearInterval(interval);
     }, [currentRound, latestRound]);
 
-    return { timer };
+    return { timer, latestRound };
 };

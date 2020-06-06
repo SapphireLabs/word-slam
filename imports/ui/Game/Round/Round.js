@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React from 'react';
 import { get } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -20,15 +20,15 @@ export const useRoundStyles = makeStyles((_) => ({
 }));
 
 export const Round = () => {
-    let [timer, setTimer] = useState(5);
     const roundClasses = useRoundStyles();
-    const { game, currentPlayer, rounds, currentRound } = useGameContext();
+    const { currentPlayer, currentRound } = useGameContext();
+    const { timer, latestRound } = useRoundTimer();
 
     return (
         <div>
             {currentRound && (
                 <>
-                    <h2>Category: {currentRound.category}</h2>
+                    <h2>Category: {get(currentRound, 'category.label')}</h2>
                     <h2 style={{ whiteSpace: 'pre' }}>
                         Story word:{' '}
                         {currentPlayer.isStoryteller
@@ -54,7 +54,7 @@ export const Round = () => {
                     )}
                 </>
             )}
-            {!currentRound && latestRound && (
+            {latestRound && (
                 <>
                     <h2>The word was: {get(latestRound, 'word')}</h2>
                     <h2>Returning to lobby in {timer}...</h2>

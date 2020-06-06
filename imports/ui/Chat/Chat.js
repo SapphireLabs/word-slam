@@ -5,10 +5,9 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
-import green from '@material-ui/core/colors/green';
-import grey from '@material-ui/core/colors/grey';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { red, blue, green, grey } from '@material-ui/core/colors';
 
 import { add as addChat } from '/imports/api/chats';
 import { Games } from '/imports/api/games';
@@ -42,6 +41,13 @@ const useStyles = makeStyles({
     },
     playerName: {
         fontWeight: 600,
+        color: grey[800],
+    },
+    Red: {
+        color: red[800],
+    },
+    Blue: {
+        color: blue[800],
     },
     system: {
         color: green[700],

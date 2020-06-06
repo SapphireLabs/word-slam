@@ -1,25 +1,26 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 
-export const ChatContent = ({ classes, chats, playerMap, gameId }) => {
+export const ChatContent = ({ classes, chats }) => {
     useEffect(() => {
         this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
     }, [chats]);
 
     return (
         <>
-            {chats.map((chat, i) => {
-                const player = get(playerMap, chat.playerId);
-
+            {chats.map((chat) => {
                 return (
                     <Typography
                         key={chat._id}
-                        className={classNames(classes.pos, { [classes.system]: !player })}
+                        className={classNames(classes.pos, { [classes.system]: !chat.name })}
                         variant="caption"
                     >
-                        {!!player && <span className={classes.playerName}>{player.name}: </span>}
+                        {!!chat.name && (
+                            <span className={classNames(classes.playerName, classes[chat.team])}>
+                                {chat.name}:{' '}
+                            </span>
+                        )}
                         {chat.message}
                     </Typography>
                 );

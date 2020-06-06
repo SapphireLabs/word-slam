@@ -18,7 +18,7 @@ export const add = new ValidatedMethod({
         },
     }).validator(),
     run: ({ gameId, playerId, message }) => {
-        console.log('Method - Chats.add / run');
+        console.log('Method - Chats.add / run', playerId);
 
         const response = {
             success: false,
@@ -26,7 +26,14 @@ export const add = new ValidatedMethod({
         };
 
         const player = Players.findOne({ _id: playerId });
-        const _id = Chats.insert({ message, gameId, playerId, team: player.team });
+        // save player details in chat object so we have it even if player leaves game
+        const _id = Chats.insert({
+            message,
+            gameId,
+            playerId,
+            name: player.name,
+            team: player.team,
+        });
 
         const currentRound = Rounds.findOne(
             { gameId, status: 'IN_PROGRESS' },

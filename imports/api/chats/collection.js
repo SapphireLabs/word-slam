@@ -14,6 +14,10 @@ Chats.schema = new SimpleSchema({
     message: {
         type: String,
     },
+    name: {
+        type: String,
+        optional: true,
+    },
     team: {
         type: String,
         optional: true,
@@ -46,6 +50,7 @@ Chats.publicFields = {
     gameId: 1,
     playerId: 1,
     message: 1,
+    name: 1,
     team: 1,
 };
 
