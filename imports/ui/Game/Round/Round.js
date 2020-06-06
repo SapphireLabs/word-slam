@@ -3,11 +3,12 @@ import { get } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { useGameContext } from '/imports/ui/core/context';
-import { clues } from '/utils/fixtures';
+import { clues, views } from '/utils';
 
 import { ClueSelect } from './ClueSelect';
 import { Board } from './Board';
 import { useRoundTimer } from './useRoundTimer';
+import { Results } from '../Results';
 
 export const useRoundStyles = makeStyles((_) => ({
     clueContainer: {
@@ -22,11 +23,14 @@ export const useRoundStyles = makeStyles((_) => ({
 export const Round = () => {
     const roundClasses = useRoundStyles();
     const { currentPlayer, currentRound } = useGameContext();
-    const { timer, latestRound } = useRoundTimer();
+    useRoundTimer();
+    console.log(currentPlayer.view);
 
     return (
         <div>
-            {currentRound && (
+            {currentPlayer.view === views.RESULTS ? (
+                <Results />
+            ) : (
                 <>
                     <h2>Category: {get(currentRound, 'category.label')}</h2>
                     <h2 style={{ whiteSpace: 'pre' }}>
@@ -52,12 +56,6 @@ export const Round = () => {
                             </div>
                         </>
                     )}
-                </>
-            )}
-            {!currentRound && latestRound && (
-                <>
-                    <h2>The word was: {get(latestRound, 'word')}</h2>
-                    <h2>Returning to lobby in {timer}...</h2>
                 </>
             )}
         </div>

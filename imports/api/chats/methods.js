@@ -1,8 +1,10 @@
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
+import { statuses, views } from '/utils/constants';
+
 import { Chats } from './collection';
 import { Players, updateStats } from '../players';
-import { Rounds } from '../rounds';
+import { add as addRound, Rounds } from '../rounds';
 import { Games } from '../games';
 
 export const add = new ValidatedMethod({
@@ -38,7 +40,7 @@ export const add = new ValidatedMethod({
             team: player.team,
         });
 
-        const currentRound = Rounds.findOne({ gameId, status: 'IN_PROGRESS' });
+        const currentRound = Rounds.findOne({ gameId, status: statuses.IN_PROGRESS });
 
         if (currentRound) {
             console.log('Method - Chats.add / guess');
@@ -55,13 +57,26 @@ export const add = new ValidatedMethod({
                         { _id: currentRound._id },
                         {
                             $set: {
-                                status: 'COMPLETED',
+                                status: statuses.COMPLETED,
                                 winnerId: playerId,
                                 winnerTeam: player.team,
                                 isSingleTeam: game.isSingleTeam,
                             },
                         }
                     );
+
+                    // add next round
+                    addRound.call({ gameId });
+                    Games.update(
+                        { _id: gameId },
+                        {
+                            $set: {
+                                status: 'WAITING',
+                            },
+                        }
+                    );
+                    // move players to results screen
+                    Players.update({ gameId }, { $set: { view: views.RESULTS } }, { multi: true });
                     response.isRoundComplete = true;
                 }
             }

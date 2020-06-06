@@ -1,26 +1,25 @@
 import { Meteor } from 'meteor/meteor';
-import { useEffect, useState, useMemo } from 'react';
-import { last } from 'lodash';
-import moment from 'moment';
+import { useEffect } from 'react';
 
 import { add as addRound, Rounds } from '/imports/api/rounds';
 import { Chats } from '/imports/api/chats';
 import { Games } from '/imports/api/games';
 import { updateStats } from '/imports/api/players';
 import { useGameContext } from '/imports/ui/core/context';
-import { statuses } from '/utils/constants';
+import { statuses } from '/utils';
 
 export const useRoundTimer = () => {
-    const { currentPlayer, currentRound, game, rounds } = useGameContext();
-    let [timer, setTimer] = useState(5);
-    const latestRound = useMemo(() => last(rounds.filter((r) => r.status === statuses.COMPLETED)), [
-        rounds,
-    ]);
+    const { currentPlayer, currentRound, game } = useGameContext();
 
     // Show new letter every 10 seconds
     useEffect(() => {
         let interval;
-        if (currentRound && currentPlayer.isStoryteller && currentRound.hiddenWord) {
+        if (
+            currentRound &&
+            currentPlayer.isStoryteller &&
+            currentRound.status === statuses.IN_PROGRESS
+        ) {
+            clearInterval(interval);
             interval = setInterval(() => {
                 const hidden = currentRound.hiddenWord.reduce((acc, show, i) => {
                     if (!show) {
@@ -65,18 +64,4 @@ export const useRoundTimer = () => {
 
         return () => clearInterval(interval);
     }, [currentRound]);
-
-    // show round timer for next round
-    useEffect(() => {
-        let interval;
-        if (!currentRound && latestRound) {
-            interval = setInterval(() => {
-                setTimer(5 - moment().diff(moment(latestRound.updatedAt), 'seconds'));
-            }, 1000);
-        }
-
-        return () => clearInterval(interval);
-    }, [currentRound, latestRound]);
-
-    return { timer, latestRound };
 };

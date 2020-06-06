@@ -12,41 +12,43 @@ const insert = (playerId, gameId, t) => {
     timeouts[playerId][gameId] = t;
 };
 
-Meteor.publish('_connections', function({ playerId, gameId }) {
-    if (playerId && gameId) {
-        // update player connection status
-        Players.update({ _id: playerId }, { $set: { gameId, isConnected: true } });
+if (Meteor.isServer) {
+    Meteor.publish('_connections', function({ playerId, gameId }) {
+        if (playerId && gameId) {
+            // update player connection status
+            Players.update({ _id: playerId }, { $set: { gameId, isConnected: true } });
 
-        // clear existing deletes
-        const existingTimeouts = get(timeouts, playerId, {});
-        Object.keys(existingTimeouts).forEach((id) => {
-            clearTimeout(existingTimeouts[id]);
-            delete existingTimeouts[id];
-        });
-    }
+            // clear existing deletes
+            const existingTimeouts = get(timeouts, playerId, {});
+            Object.keys(existingTimeouts).forEach((id) => {
+                clearTimeout(existingTimeouts[id]);
+                delete existingTimeouts[id];
+            });
+        }
 
-    this._session.socket.on(
-        'close',
-        Meteor.bindEnvironment(() => {
-            if (playerId && gameId) {
-                // set player to disconnected
-                Players.update({ _id: playerId }, { $set: { isConnected: false } });
+        this._session.socket.on(
+            'close',
+            Meteor.bindEnvironment(() => {
+                if (playerId && gameId) {
+                    // set player to disconnected
+                    Players.update({ _id: playerId }, { $set: { isConnected: false } });
 
-                // delete player in 5 seconds
-                insert(
-                    playerId,
-                    gameId,
-                    setTimeout(
-                        Meteor.bindEnvironment(() => {
-                            remove.call({ _id: playerId });
-                            delete timeouts[playerId][gameId];
-                        }),
-                        5000
-                    )
-                );
-            }
-        })
-    );
+                    // delete player in 5 seconds
+                    insert(
+                        playerId,
+                        gameId,
+                        setTimeout(
+                            Meteor.bindEnvironment(() => {
+                                remove.call({ _id: playerId });
+                                delete timeouts[playerId][gameId];
+                            }),
+                            5000
+                        )
+                    );
+                }
+            })
+        );
 
-    return this.ready();
-});
+        return this.ready();
+    });
+}

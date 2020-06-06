@@ -1,5 +1,8 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { get } from 'lodash';
+
+import { views } from '/utils/constants';
 
 export const Players = new Mongo.Collection('players');
 
@@ -78,6 +81,16 @@ Players.schema = new SimpleSchema({
         type: playerStatsType,
         defaultValue: {},
     },
+    view: {
+        type: String,
+        optional: true,
+        defaultValue: views.LOBBY,
+        autoValue: function(data) {
+            if (this.isUpdate && get(data, '$set.gameId')) {
+                return views.LOBBY;
+            }
+        },
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -111,6 +124,7 @@ Players.publicFields = {
     isReady: 1,
     isConnected: 1,
     stats: 1,
+    view: 1,
 };
 
 Players.attachSchema(Players.schema);

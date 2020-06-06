@@ -5,7 +5,7 @@ import { usePlayerState, useGameState } from '/imports/ui/core/hooks';
 import { GameContext } from '/imports/ui/core/context';
 import { Connections } from '/imports/ui/core/subscriptions';
 import { Chat } from '/imports/ui/Chat';
-import { statuses } from '/utils/constants';
+import { statuses, views } from '/utils/constants';
 
 import { Lobby } from './Lobby';
 import { Round } from './Round';
@@ -43,7 +43,7 @@ export const Game = () => {
                 chats,
             }}
         >
-            {game.status === 'WAITING' ? (
+            {game.status === 'WAITING' && player.view === views.LOBBY ? (
                 <Lobby />
             ) : (
                 <Round game={game} player={player} players={players} rounds={rounds} />

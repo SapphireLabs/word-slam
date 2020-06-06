@@ -29,6 +29,9 @@ export const Lobby = () => {
     const unassigned = useMemo(() => playersInGame.filter((p) => !p.team), [playersInGame]);
     const gameStatusMessages = useMemo(() => {
         const messages = [];
+        if (!currentPlayer.isStoryteller) {
+            messages.push('The storyteller starts the round');
+        }
         if (!playersInGame.some((p) => p.team === teams.BLUE && p.isStoryteller)) {
             messages.push('Blue team needs a storyteller');
         }

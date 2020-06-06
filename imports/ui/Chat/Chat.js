@@ -78,19 +78,19 @@ export const Chat = ({ chats, gameId, playerId, players }) => {
             addChat.call(
                 { gameId, playerId, message: message.trim() },
                 (_, { isRoundComplete }) => {
-                    if (isRoundComplete) {
-                        Meteor.setTimeout(() => {
-                            addRound.call({ gameId });
-                            Games.update(
-                                { _id: gameId },
-                                {
-                                    $set: {
-                                        status: 'WAITING',
-                                    },
-                                }
-                            );
-                        }, 5000);
-                    }
+                    // if (isRoundComplete) {
+                    //     Meteor.setTimeout(() => {
+                    //         addRound.call({ gameId });
+                    //         Games.update(
+                    //             { _id: gameId },
+                    //             {
+                    //                 $set: {
+                    //                     status: 'WAITING',
+                    //                 },
+                    //             }
+                    //         );
+                    //     }, 5000);
+                    // }
                 }
             );
             setMessage('');

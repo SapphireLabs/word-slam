@@ -18,3 +18,9 @@ export const statuses = {
     IN_PROGRESS: 'IN_PROGRESS',
     COMPLETED: 'COMPLETED',
 };
+
+export const views = {
+    LOBBY: 'LOBBY',
+    ROUND: 'ROUND',
+    RESULTS: 'RESULTS',
+};
