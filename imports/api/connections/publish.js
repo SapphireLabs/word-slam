@@ -3,35 +3,46 @@ import { get } from 'lodash';
 
 import { Players, remove } from '/imports/api/players';
 
-// store 5 second timeouts for deleting players in memory?
+// store 5 second timeouts for deleting players
 const timeouts = {};
+const insert = (playerId, gameId, t) => {
+    if (!timeouts[playerId]) {
+        timeouts[playerId] = {};
+    }
+    timeouts[playerId][gameId] = t;
+};
 
 Meteor.publish('_connections', function({ playerId, gameId }) {
-    const key = playerId && gameId ? playerId + gameId : null;
+    if (playerId && gameId) {
+        // update player connection status
+        Players.update({ _id: playerId }, { $set: { gameId, isConnected: true } });
 
-    if (key && get(timeouts, key)) {
-        Players.update({ _id: playerId }, { $set: { isConnected: true } });
-
-        clearTimeout(timeouts[key]);
-        delete timeouts[key];
+        // clear existing deletes
+        const existingTimeouts = get(timeouts, playerId, {});
+        Object.keys(existingTimeouts).forEach((id) => {
+            clearTimeout(existingTimeouts[id]);
+            delete existingTimeouts[id];
+        });
     }
 
     this._session.socket.on(
         'close',
         Meteor.bindEnvironment(() => {
-            if (key) {
+            if (playerId && gameId) {
                 // set player to disconnected
                 Players.update({ _id: playerId }, { $set: { isConnected: false } });
-                // refresh timer if exist
-                if (get(timeouts, key)) {
-                    clearTimeout(timeouts[key]);
-                }
-                timeouts[key] = setTimeout(
-                    Meteor.bindEnvironment(() => {
-                        remove.call({ _id: playerId });
-                        delete timeouts[key];
-                    }),
-                    5000
+
+                // delete player in 5 seconds
+                insert(
+                    playerId,
+                    gameId,
+                    setTimeout(
+                        Meteor.bindEnvironment(() => {
+                            remove.call({ _id: playerId });
+                            delete timeouts[playerId][gameId];
+                        }),
+                        5000
+                    )
                 );
             }
         })

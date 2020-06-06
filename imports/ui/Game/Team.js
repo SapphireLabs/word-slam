@@ -5,13 +5,14 @@ import classNames from 'classnames';
 import { Players } from '/imports/api/players';
 import { useStyles } from '/imports/ui/core/hooks';
 import { useGameContext } from '/imports/ui/core/context';
+import { generateWord } from '/utils/game';
 import { playerTypes, teams } from '/utils/constants';
 
 import { PlayerList } from './PlayerList';
 
 export const Team = ({ team }) => {
     const classes = useStyles();
-    const { currentPlayer, playersInGame } = useGameContext();
+    const { currentPlayer, playersInGame, currentRound } = useGameContext();
     const hasStoryteller = useMemo(
         () => playersInGame.some((p) => p.isStoryteller && p.team === team),
         [playersInGame]
@@ -19,6 +20,7 @@ export const Team = ({ team }) => {
 
     const onClickStoryteller = () => {
         Players.update({ _id: currentPlayer._id }, { $set: { isStoryteller: true, team } });
+        generateWord(currentRound);
     };
 
     const onClickPlayer = () => {

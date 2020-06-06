@@ -9,12 +9,12 @@ import { teams } from '/utils/constants';
 
 export const GameTypeSwitch = () => {
     const { game, playersInGame } = useGameContext();
-    const canSwitchToSingle = useMemo(() => !playersInGame.some((p) => p.team === teams.RED), [
-        playersInGame,
-    ]);
+    const disabled = useMemo(
+        () => !game.isSingleTeam && playersInGame.some((p) => p.team === teams.RED),
+        [game.isSingleTeam, playersInGame]
+    );
 
     const onChange = () => {
-        console.log('wtf');
         Games.update({ _id: game._id }, { $set: { isSingleTeam: !game.isSingleTeam } });
     };
 
@@ -30,7 +30,8 @@ export const GameTypeSwitch = () => {
                     />
                 }
                 label="Team versus"
-                disabled={!game.isSingleTeam && !canSwitchToSingle}
+                disabled={disabled}
+                title={disabled ? 'Cannot switch to single team game if there are Red players' : ''}
             />
         </FormGroup>
     );

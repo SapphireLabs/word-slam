@@ -3,6 +3,7 @@ import T from 'prop-types';
 import Select from 'react-select';
 
 import { clues } from '/utils/fixtures';
+
 import { ClueCard } from './ClueCard';
 
 const optionsMap = Object.keys(clues).reduce((map, type) => {

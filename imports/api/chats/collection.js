@@ -14,6 +14,10 @@ Chats.schema = new SimpleSchema({
     message: {
         type: String,
     },
+    team: {
+        type: String,
+        optional: true,
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -42,6 +46,7 @@ Chats.publicFields = {
     gameId: 1,
     playerId: 1,
     message: 1,
+    team: 1,
 };
 
 Chats.attachSchema(Chats.schema);

@@ -1,7 +1,6 @@
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
 import { Chats } from './collection';
-import { Games } from '../games';
 import { Players } from '../players';
 import { Rounds } from '../rounds';
 
@@ -26,7 +25,9 @@ export const add = new ValidatedMethod({
             message: 'There was some server error.',
         };
 
-        const _id = Chats.insert({ message, gameId, playerId });
+        const player = Players.findOne({ _id: playerId });
+        const _id = Chats.insert({ message, gameId, playerId, team: player.team });
+
         const currentRound = Rounds.findOne(
             { gameId, status: 'IN_PROGRESS' },
             { fields: Rounds.publicFields }
@@ -35,8 +36,6 @@ export const add = new ValidatedMethod({
 
         if (currentRound) {
             console.log('Method - Chats.add / guess');
-            const game = Games.findOne({ _id: gameId }, { fields: Games.publicFields });
-            const player = Players.findOne({ _id: playerId }, { fields: Players.publicFields });
             const { word } = currentRound;
 
             if (!player.isStoryteller && player.team && word.length === message.length) {
