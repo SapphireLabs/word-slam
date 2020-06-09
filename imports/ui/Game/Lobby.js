@@ -85,6 +85,7 @@ export const Lobby = () => {
                         players={unassigned}
                         type={playerTypes.UNASSIGNED}
                         playerClass={classes.player}
+                        game={game}
                     />
                 </>
             )}
