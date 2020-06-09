@@ -43,10 +43,10 @@ export const Game = () => {
                 chats,
             }}
         >
-            {game.status === 'WAITING' && player.view === views.LOBBY ? (
-                <Lobby />
-            ) : (
+            {game.status === 'IN_PROGRESS' || player.view === views.RESULTS ? (
                 <Round game={game} player={player} players={players} rounds={rounds} />
+            ) : (
+                <Lobby />
             )}
             <Chat chats={chats} gameId={game._id} playerId={player._id} players={players} />
         </GameContext.Provider>

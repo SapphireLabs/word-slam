@@ -5,7 +5,8 @@ import { useDrag, useDrop } from 'react-dnd';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import green from '@material-ui/core/colors/green';
+import { green, grey } from '@material-ui/core/colors';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { Rounds } from '/imports/api/rounds';
 import { itemTypes } from '/utils/constants';
@@ -20,6 +21,16 @@ const useStyles = makeStyles((theme) => ({
         height: 100,
         textAlign: 'center',
         color: theme.palette.text.secondary,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    paperContent: {
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        color: theme.palette.text.primary,
     },
     isOver: {
         backgroundColor: green[200],
@@ -59,9 +70,12 @@ const Slot = ({ idx, round, currentPlayer }) => {
                 );
             }
         },
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
+        canDrop: (item) => idx !== item.idx && currentPlayer.isStoryteller,
+        collect: (monitor) => {
+            return {
+                isOver: !!monitor.isOver() && monitor.canDrop(),
+            };
+        },
     });
     const clue = get(clues, `${currentPlayer.team}.${idx}`);
     const [{ isDragging }, dragRef] = useDrag({
@@ -71,16 +85,27 @@ const Slot = ({ idx, round, currentPlayer }) => {
         }),
     });
 
+    const onClickDelete = () => {
+        Rounds.update({ _id }, { $set: { [`clues.${currentPlayer.team}.${idx}`]: null } });
+    };
+
     const renderSlot = () => (
         <Paper ref={dropRef} className={classNames(classes.paper, { [classes.isOver]: isOver })}>
-            {get(clue, 'label', '')}
+            <div className={classes.paperContent}>{get(clue, 'label', '')}</div>
+            {!!clue && currentPlayer.isStoryteller && (
+                <DeleteIcon
+                    style={{ cursor: 'pointer' }}
+                    onClick={onClickDelete}
+                    fontSize="small"
+                />
+            )}
         </Paper>
     );
 
-    return clue ? (
-        <span className={classes.draggableSlot} ref={dragRef}>
+    return clue && currentPlayer.isStoryteller ? (
+        <div className={classes.draggableSlot} ref={dragRef}>
             {renderSlot()}
-        </span>
+        </div>
     ) : (
         renderSlot()
     );
