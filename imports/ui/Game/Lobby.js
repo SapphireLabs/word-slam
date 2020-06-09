@@ -41,10 +41,9 @@ export const Lobby = () => {
         if (game.isSingleTeam) {
             return messages;
         }
-        // TODO: turn back on after done testing
-        // if (!playersInGame.some((p) => p.team === teams.RED && !p.isStoryteller)) {
-        //     messages.push('Red team needs players');
-        // }
+        if (!playersInGame.some((p) => p.team === teams.RED && !p.isStoryteller)) {
+            messages.push('Red team needs players');
+        }
         if (!playersInGame.some((p) => p.team === teams.RED && p.isStoryteller)) {
             messages.push('Red team needs a storyteller');
         }

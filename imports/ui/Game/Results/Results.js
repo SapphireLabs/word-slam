@@ -6,11 +6,21 @@ import { Players } from '/imports/api';
 import { useGameContext } from '/imports/ui/core';
 import { statuses, views } from '/utils';
 
+const buildWordList = (clues) =>
+    clues
+        .filter((c) => !!c)
+        .map((c) => c.label)
+        .join(', ');
+
 const TeamResults = ({ latestRound, score }) => {
     return (
         <div>
             {latestRound.winnerTeam ? (
-                <h3>{latestRound.winnerTeam} team won the round!</h3>
+                <>
+                    <h3>{latestRound.winnerTeam} team won the round!</h3>
+                    <h5>Clues given (Blue): {buildWordList(latestRound.clues.Blue)}</h5>
+                    <h5>Clues given (Red): {buildWordList(latestRound.clues.Red)}</h5>
+                </>
             ) : (
                 <h3>No one guessed the word...</h3>
             )}
