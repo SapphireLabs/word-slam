@@ -5,7 +5,7 @@ import { useGameContext } from '/imports/ui/core/context';
 import { statuses, teams } from '/utils';
 
 /**
- * Reveals a letter every 20 seconds, ends the round if last letter is revealed
+ * Reveals a letter based on game hint timer setting, ends the round if last letter is revealed
  */
 export const useRoundTimer = () => {
     const { currentPlayer, currentRound, game } = useGameContext();
@@ -17,7 +17,8 @@ export const useRoundTimer = () => {
             currentRound &&
             currentPlayer.isStoryteller &&
             currentPlayer.team === teams.BLUE &&
-            currentRound.status === statuses.IN_PROGRESS
+            currentRound.status === statuses.IN_PROGRESS &&
+            game.showHint
         ) {
             clearInterval(interval);
             interval = setInterval(() => {
@@ -46,7 +47,7 @@ export const useRoundTimer = () => {
                     { _id: currentRound._id },
                     { $set: { [`hiddenWord.${revealIdx}`]: true } }
                 );
-            }, 20000);
+            }, game.showHint * 1000);
         }
 
         return () => clearInterval(interval);

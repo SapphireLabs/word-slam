@@ -40,6 +40,11 @@ Games.schema = new SimpleSchema({
         type: Boolean,
         defaultValue: false,
     },
+    showHint: {
+        type: SimpleSchema.Integer,
+        defaultValue: 15,
+        optional: true,
+    },
     createdAt: {
         type: Date,
         autoValue: function() {
@@ -68,6 +73,7 @@ Games.publicFields = {
     accessCode: 1,
     status: 1,
     isSingleTeam: 1,
+    showHint: 1,
 };
 
 Games.attachSchema(Games.schema);
