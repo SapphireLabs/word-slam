@@ -38,11 +38,10 @@ export const Round = () => {
                     <h2>Category: {get(currentRound, 'category.label')}</h2>
                     <h2 style={{ whiteSpace: 'pre' }}>
                         Story word:{' '}
-                        {currentPlayer.isStoryteller
-                            ? currentRound.word
-                            : currentRound.hiddenWord
-                                  .map((show, i) => (show ? currentRound.word[i] + ' ' : '_ '))
-                                  .join('')}
+                        {currentRound.hiddenWord
+                            .map((show, i) => (show ? currentRound.word[i] + ' ' : '_ '))
+                            .join('')}
+                        {currentPlayer.isStoryteller && ` (${currentRound.word})`}
                     </h2>
                     <Board round={currentRound} currentPlayer={currentPlayer} />
                     {currentPlayer.isStoryteller && (
