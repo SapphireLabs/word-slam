@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { get } from 'lodash';
 
 import { endRound, Rounds } from '/imports/api/rounds';
 import { useGameContext } from '/imports/ui/core/context';
@@ -14,15 +15,16 @@ export const useRoundTimer = () => {
     useEffect(() => {
         let interval;
         if (
+            !interval &&
             currentRound &&
             currentPlayer.isStoryteller &&
             currentPlayer.team === teams.BLUE &&
             currentRound.status === statuses.IN_PROGRESS &&
             game.showHint
         ) {
-            clearInterval(interval);
             interval = setInterval(() => {
-                const hidden = currentRound.hiddenWord.reduce((acc, show, i) => {
+                const round = Rounds.findOne({ _id: currentRound._id });
+                const hidden = round.hiddenWord.reduce((acc, show, i) => {
                     if (!show) {
                         acc.push(i);
                     }
@@ -51,5 +53,5 @@ export const useRoundTimer = () => {
         }
 
         return () => clearInterval(interval);
-    }, [currentRound]);
+    }, [currentRound.status]);
 };

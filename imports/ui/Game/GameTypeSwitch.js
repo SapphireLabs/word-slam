@@ -22,7 +22,6 @@ export const GameTypeSwitch = () => {
             Games.update({ _id: game._id }, { $set: { showHint: e.target.value } });
         }
     };
-    console.log(game.showHint);
 
     return (
         <>

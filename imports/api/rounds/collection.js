@@ -151,6 +151,7 @@ Rounds.publicFields = {
     winnerTeam: 1,
     isSingleTeam: 1,
     clues: 1,
+    createdAt: 1,
     updatedAt: 1,
     startedAt: 1,
 };
