@@ -8,7 +8,7 @@ import { Games } from '/imports/api/games';
 import { Rounds } from '/imports/api/rounds';
 import { useStyles } from '/imports/ui/core/hooks';
 import { useGameContext } from '/imports/ui/core/context';
-import { playerTypes, teams, statuses } from '/utils/constants';
+import { playerTypes, teams, statuses, views } from '/utils/constants';
 
 import { StorySelect } from './StorySelect';
 import { PlayerList } from './PlayerList';
@@ -41,11 +41,15 @@ export const Lobby = () => {
         if (game.isSingleTeam) {
             return messages;
         }
-        if (!playersInGame.some((p) => p.team === teams.RED && !p.isStoryteller)) {
-            messages.push('Red team needs players');
-        }
+        // TODO: turn back on after done testing
+        // if (!playersInGame.some((p) => p.team === teams.RED && !p.isStoryteller)) {
+        //     messages.push('Red team needs players');
+        // }
         if (!playersInGame.some((p) => p.team === teams.RED && p.isStoryteller)) {
             messages.push('Red team needs a storyteller');
+        }
+        if (playersInGame.some((p) => p.view === views.RESULTS)) {
+            messages.push('There are still players viewing the results screen.');
         }
 
         return messages;

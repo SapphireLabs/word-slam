@@ -4,7 +4,7 @@ import { statuses, views } from '/utils/constants';
 
 import { Chats } from './collection';
 import { Players, updateStats } from '../players';
-import { add as addRound, Rounds } from '../rounds';
+import { add as addRound, endRound, Rounds } from '../rounds';
 import { Games } from '../games';
 
 export const add = new ValidatedMethod({
@@ -30,7 +30,6 @@ export const add = new ValidatedMethod({
         };
 
         const player = Players.findOne({ _id: playerId });
-        const game = Games.findOne({ _id: gameId });
         // save player details in chat object so we have it even if player leaves game
         const _id = Chats.insert({
             message,
@@ -48,35 +47,7 @@ export const add = new ValidatedMethod({
 
             if (!player.isStoryteller && player.team && word.length === message.length) {
                 if (word.match(new RegExp(message, 'i'))) {
-                    updateStats(game, player, currentRound);
-                    Chats.insert({
-                        gameId,
-                        message: `${player.name} has guessed the word!`,
-                    });
-                    Rounds.update(
-                        { _id: currentRound._id },
-                        {
-                            $set: {
-                                status: statuses.COMPLETED,
-                                winnerId: playerId,
-                                winnerTeam: player.team,
-                                isSingleTeam: game.isSingleTeam,
-                            },
-                        }
-                    );
-
-                    // add next round
-                    addRound.call({ gameId });
-                    Games.update(
-                        { _id: gameId },
-                        {
-                            $set: {
-                                status: 'WAITING',
-                            },
-                        }
-                    );
-                    // move players to results screen
-                    Players.update({ gameId }, { $set: { view: views.RESULTS } }, { multi: true });
+                    endRound.call({ _id: currentRound._id, playerId: playerId });
                     response.isRoundComplete = true;
                 }
             }

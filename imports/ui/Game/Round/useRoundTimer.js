@@ -1,13 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { useEffect } from 'react';
 
-import { add as addRound, Rounds } from '/imports/api/rounds';
+import { add as addRound, endRound, Rounds } from '/imports/api/rounds';
 import { Chats } from '/imports/api/chats';
 import { Games } from '/imports/api/games';
 import { updateStats } from '/imports/api/players';
 import { useGameContext } from '/imports/ui/core/context';
 import { statuses } from '/utils';
 
+/**
+ * Reveals a letter every 10 seconds, ends the round if last letter is revealed
+ */
 export const useRoundTimer = () => {
     const { currentPlayer, currentRound, game } = useGameContext();
 
@@ -30,28 +33,14 @@ export const useRoundTimer = () => {
                 }, []);
 
                 if (hidden.length === 1) {
-                    // end round
-                    // TODO: use new game end stuff
-                    updateStats(game, currentPlayer, currentRound, false);
-                    Rounds.update(
-                        { _id: currentRound._id },
-                        { $set: { [`hiddenWord.${hidden[0]}`]: true, status: 'COMPLETED' } }
-                    );
-                    Chats.insert({
-                        gameId: game._id,
-                        message: 'Nobody was able to guess the word.',
+                    // nobody guessed successfully, end round
+                    endRound.call({
+                        _id: currentRound._id,
+                        playerId: currentPlayer._id,
+                        isGuessed: false,
                     });
-                    Meteor.setTimeout(() => {
-                        addRound.call({ gameId: game._id });
-                        Games.update(
-                            { _id: game._id },
-                            {
-                                $set: {
-                                    status: 'WAITING',
-                                },
-                            }
-                        );
-                    }, 5000);
+                    clearInterval(interval);
+                    return;
                 }
 
                 const revealIdx = hidden[Math.floor(Math.random() * hidden.length)];

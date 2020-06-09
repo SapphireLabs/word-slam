@@ -13,7 +13,9 @@ import { Round } from './Round';
 export const Game = () => {
     const { accessCode } = useParams();
     const { isLoading: isPlayerLoading, player, playerId } = usePlayerState();
-    const { isLoading: isGameLoading, game, players, rounds, chats } = useGameState(accessCode);
+    const { isLoading: isGameLoading, game, players, rounds, chats, score } = useGameState(
+        accessCode
+    );
     const isLoading = isPlayerLoading || isGameLoading;
     const isInvalid = !game || !playerId || !player || (player && game._id !== player.gameId);
     const currentRound = rounds && rounds.find((r) => r.status !== statuses.COMPLETED);
@@ -41,6 +43,7 @@ export const Game = () => {
                 rounds,
                 currentRound,
                 chats,
+                score,
             }}
         >
             {game.status === 'IN_PROGRESS' || player.view === views.RESULTS ? (

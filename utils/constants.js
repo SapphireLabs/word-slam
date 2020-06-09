@@ -25,3 +25,8 @@ export const views = {
     ROUND: 'ROUND',
     RESULTS: 'RESULTS',
 };
+
+export const DEFAULT_RESPONSE = {
+    success: false,
+    message: 'There was some server error.',
+};

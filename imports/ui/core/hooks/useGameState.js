@@ -1,10 +1,13 @@
 import { Meteor } from 'meteor/meteor';
+import { useMemo } from 'react';
+import { get } from 'lodash';
 import { useTracker } from 'meteor/react-meteor-data';
 
 import { Games } from '/imports/api/games';
+import { statuses } from '/utils';
 
 export const useGameState = (accessCode) => {
-    return useTracker(() => {
+    const state = useTracker(() => {
         const subscription = Meteor.subscribe('oneGame', accessCode);
         const game = Games.findOne({ accessCode });
         let loading = false;
@@ -22,4 +25,22 @@ export const useGameState = (accessCode) => {
             chats: game && game.chats().fetch(),
         };
     });
+    const isSingleTeam = get(state, 'game.isSingleTeam');
+    const score = useMemo(() => {
+        if (isSingleTeam) {
+            return null;
+        }
+        return get(state, 'rounds', []).reduce(
+            (counts, r) => {
+                if (r.status === statuses.COMPLETED && r.winnerTeam && !r.isSingleTeam) {
+                    counts[r.winnerTeam]++;
+                }
+
+                return counts;
+            },
+            { Blue: 0, Red: 0 }
+        );
+    }, [state.rounds, isSingleTeam]);
+
+    return { ...state, score };
 };

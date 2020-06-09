@@ -25,6 +25,10 @@ export const Round = () => {
     const { currentPlayer, currentRound } = useGameContext();
     useRoundTimer();
 
+    if (!currentRound) {
+        return null;
+    }
+
     return (
         <div>
             {currentPlayer.view === views.RESULTS ? (

@@ -85,7 +85,7 @@ Players.schema = new SimpleSchema({
         type: String,
         optional: true,
         autoValue: function(data) {
-            if (this.isInsert || (this.isUpdate && get(data, '$set.gameId'))) {
+            if (this.isInsert || ((this.isUpdate || this.isUpsert) && get(data, '$set.gameId'))) {
                 return views.LOBBY;
             }
         },

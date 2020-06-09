@@ -6,8 +6,18 @@ import { Players } from '/imports/api';
 import { useGameContext } from '/imports/ui/core';
 import { statuses, views } from '/utils';
 
+const TeamResults = ({ latestRound, score }) => {
+    return (
+        <div>
+            <h3>{latestRound.winnerTeam} team won the round!</h3>
+            <h4>Blue: {score.Blue}</h4>
+            <h4>Red: {score.Red}</h4>
+        </div>
+    );
+};
+
 export const Results = () => {
-    const { currentPlayer, rounds } = useGameContext();
+    const { currentPlayer, rounds, score } = useGameContext();
     const latestRound = useMemo(() => last(rounds.filter((r) => r.status === statuses.COMPLETED)), [
         rounds,
     ]);
@@ -19,6 +29,9 @@ export const Results = () => {
     return (
         <>
             <h2>The word was: {get(latestRound, 'word')}</h2>
+            {!get(latestRound, 'isSingleTeam') && (
+                <TeamResults latestRound={latestRound} score={score} />
+            )}
             <Button variant="outlined" color="primary" onClick={onClickReturn}>
                 Return to Lobby
             </Button>
