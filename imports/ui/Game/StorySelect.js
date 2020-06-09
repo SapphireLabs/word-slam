@@ -42,8 +42,9 @@ export const useStyles = makeStyles({
     },
 });
 
+const randomOption = { label: 'Random', value: 'Random' };
 const toOption = (val) => ({ label: val, value: val });
-const options = [...Object.keys(stories).map(toOption), { label: 'Random', value: 'Random' }];
+const options = [...Object.keys(stories).map(toOption), randomOption];
 
 export const StorySelect = () => {
     const classes = useStyles();
@@ -59,6 +60,10 @@ export const StorySelect = () => {
     };
 
     const toggleOpen = () => setOpen(!open);
+    const selectedCategory =
+        get(currentRound, 'category.value') === 'Random'
+            ? randomOption
+            : get(currentRound, 'category');
 
     return (
         <div>
@@ -77,7 +82,7 @@ export const StorySelect = () => {
                             className={classes.select}
                             isSearchable
                             options={options}
-                            value={get(currentRound, 'category')}
+                            value={selectedCategory}
                             onChange={onChange}
                         />
                         <Button size="small" variant="outlined" onClick={onClick}>

@@ -9,7 +9,11 @@ import { statuses, views } from '/utils';
 const TeamResults = ({ latestRound, score }) => {
     return (
         <div>
-            <h3>{latestRound.winnerTeam} team won the round!</h3>
+            {latestRound.winnerTeam ? (
+                <h3>{latestRound.winnerTeam} team won the round!</h3>
+            ) : (
+                <h3>No one guessed the word...</h3>
+            )}
             <h4>Blue: {score.Blue}</h4>
             <h4>Red: {score.Red}</h4>
         </div>

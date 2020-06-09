@@ -1,22 +1,23 @@
 import React from 'react';
 import T from 'prop-types';
+import { get } from 'lodash';
 import { Tooltip } from '@material-ui/core';
 
 import { views } from '/utils';
 
 const renderPlayerStats = ({ player, isSingleTeam }) => {
     const {
-        singleRoundsPlayed,
-        singleRoundsWon,
-        singleRoundsAsStoryteller,
-        teamRoundsPlayed,
-        teamRoundsWon,
-        teamRoundsAsStoryteller,
-        teamRoundsWonAsStoryteller,
-        totGuessSecs,
-        totStorytellerSecs,
-        wordsGuessed,
-    } = player.stats;
+        singleRoundsPlayed = 0,
+        singleRoundsWon = 0,
+        singleRoundsAsStoryteller = 0,
+        teamRoundsPlayed = 0,
+        teamRoundsWon = 0,
+        teamRoundsAsStoryteller = 0,
+        teamRoundsWonAsStoryteller = 0,
+        totGuessSecs = 0,
+        totStorytellerSecs = 0,
+        wordsGuessed = 0,
+    } = get(player, 'stats', {});
 
     return (
         <div key={`stats-${player._id}`}>

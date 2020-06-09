@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { endRound, Rounds } from '/imports/api/rounds';
 import { useGameContext } from '/imports/ui/core/context';
-import { statuses } from '/utils';
+import { statuses, teams } from '/utils';
 
 /**
  * Reveals a letter every 10 seconds, ends the round if last letter is revealed
@@ -16,6 +16,7 @@ export const useRoundTimer = () => {
         if (
             currentRound &&
             currentPlayer.isStoryteller &&
+            currentPlayer.team === teams.BLUE &&
             currentRound.status === statuses.IN_PROGRESS
         ) {
             clearInterval(interval);
@@ -28,7 +29,7 @@ export const useRoundTimer = () => {
                     return acc;
                 }, []);
 
-                if (hidden.length === 1) {
+                if (hidden.length <= 1) {
                     // nobody guessed successfully, end round
                     endRound.call({
                         _id: currentRound._id,

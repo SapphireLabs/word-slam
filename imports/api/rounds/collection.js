@@ -67,7 +67,7 @@ Rounds.schema = new SimpleSchema({
                 this.isInsert ||
                 (this.isUpdate &&
                     get(data, '$set.word') &&
-                    get(data, '$set.category.value') !== 'Random')
+                    get(data, '$set.category.value') === 'Random')
             ) {
                 return {
                     label: getCategory(get(data, 'word', get(data, '$set.word'))),
@@ -149,6 +149,7 @@ Rounds.publicFields = {
     status: 1,
     winnerId: 1,
     winnerTeam: 1,
+    isSingleTeam: 1,
     clues: 1,
     updatedAt: 1,
     startedAt: 1,

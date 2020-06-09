@@ -28,6 +28,7 @@ export const useGameState = (accessCode) => {
     const isSingleTeam = get(state, 'game.isSingleTeam');
     const score = useMemo(() => {
         if (isSingleTeam) {
+            // TODO: single player scores
             return null;
         }
         return get(state, 'rounds', []).reduce(
