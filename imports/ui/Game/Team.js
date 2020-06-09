@@ -12,7 +12,7 @@ import { PlayerList } from './PlayerList';
 
 export const Team = ({ team }) => {
     const classes = useStyles();
-    const { currentPlayer, playersInGame, currentRound } = useGameContext();
+    const { currentPlayer, playersInGame, currentRound, game } = useGameContext();
     const hasStoryteller = useMemo(
         () => playersInGame.some((p) => p.isStoryteller && p.team === team),
         [playersInGame]
@@ -67,6 +67,7 @@ export const Team = ({ team }) => {
                 players={storyTellers}
                 type={playerTypes.STORYTELLER}
                 playerClass={classes.player}
+                game={game}
             />
 
             <div
@@ -75,7 +76,12 @@ export const Team = ({ team }) => {
             >
                 Players
             </div>
-            <PlayerList players={players} type={playerTypes.PLAYER} playerClass={classes.player} />
+            <PlayerList
+                players={players}
+                type={playerTypes.PLAYER}
+                playerClass={classes.player}
+                game={game}
+            />
         </>
     );
 };

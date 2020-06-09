@@ -1,10 +1,6 @@
-import { Meteor } from 'meteor/meteor';
 import { useEffect } from 'react';
 
-import { add as addRound, endRound, Rounds } from '/imports/api/rounds';
-import { Chats } from '/imports/api/chats';
-import { Games } from '/imports/api/games';
-import { updateStats } from '/imports/api/players';
+import { endRound, Rounds } from '/imports/api/rounds';
 import { useGameContext } from '/imports/ui/core/context';
 import { statuses } from '/utils';
 
