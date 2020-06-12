@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { Tooltip } from '@material-ui/core';
 
 import { Rounds } from '/imports/api';
 
@@ -44,12 +45,16 @@ export const ClueActions = ({ clue, round, currentPlayer, idx }) => {
 
     return (
         <div className={classes.container}>
-            <ErrorOutlineIcon
-                className={classes.pointer}
-                onClick={onClickImportant}
-                fontSize="small"
-            />
-            <AutorenewIcon className={classes.pointer} onClick={onClickFlip} fontSize="small" />
+            <Tooltip title="Mark as important">
+                <ErrorOutlineIcon
+                    className={classes.pointer}
+                    onClick={onClickImportant}
+                    fontSize="small"
+                />
+            </Tooltip>
+            <Tooltip title="Flip orientation">
+                <AutorenewIcon className={classes.pointer} onClick={onClickFlip} fontSize="small" />
+            </Tooltip>
         </div>
     );
 };
