@@ -16,6 +16,11 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flex: 1,
         marginBottom: 16,
+        padding: theme.spacing(2),
+    },
+    center: {
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     paper: {
         padding: theme.spacing(1),
@@ -78,10 +83,9 @@ const Slot = ({ idx, round, currentPlayer }) => {
                 );
             }
         },
-        canDrop: (item) => idx !== item.idx && currentPlayer.isStoryteller,
         collect: (monitor) => {
             return {
-                isOver: !!monitor.isOver() && monitor.canDrop(),
+                isOver: !!monitor.isOver(),
             };
         },
     });
@@ -92,6 +96,18 @@ const Slot = ({ idx, round, currentPlayer }) => {
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
+        end: (item, monitor) => {
+            const { idx } = item;
+
+            const didDrop = monitor.didDrop();
+
+            if (!didDrop) {
+                Rounds.update(
+                    { _id: round._id },
+                    { $set: { [`clues.${currentPlayer.team}.${idx}`]: null } }
+                );
+            }
+        },
     });
 
     // empty slot if no clue
@@ -137,8 +153,8 @@ export const Board = (props) => {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
-            <Grid container spacing={1}>
+        <Paper className={classes.root}>
+            <Grid className={classes.center} container spacing={2}>
                 {[...Array(2)].map((_, i) => (
                     <Grid key={`grid-${i}`} container item xs={12} spacing={2}>
                         {[...Array(4)].map((_, j) => (
@@ -149,6 +165,6 @@ export const Board = (props) => {
                     </Grid>
                 ))}
             </Grid>
-        </div>
+        </Paper>
     );
 };

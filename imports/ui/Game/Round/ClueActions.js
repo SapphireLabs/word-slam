@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
@@ -20,13 +19,6 @@ const useStyles = makeStyles((theme) => ({
  */
 export const ClueActions = ({ clue, round, currentPlayer, idx }) => {
     const classes = useStyles();
-
-    const onClickDelete = () => {
-        Rounds.update(
-            { _id: round._id },
-            { $set: { [`clues.${currentPlayer.team}.${idx}`]: null } }
-        );
-    };
 
     const onClickFlip = () => {
         Rounds.update(
@@ -58,7 +50,6 @@ export const ClueActions = ({ clue, round, currentPlayer, idx }) => {
                 fontSize="small"
             />
             <AutorenewIcon className={classes.pointer} onClick={onClickFlip} fontSize="small" />
-            <DeleteIcon className={classes.pointer} onClick={onClickDelete} fontSize="small" />
         </div>
     );
 };
