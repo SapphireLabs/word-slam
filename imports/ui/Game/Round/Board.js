@@ -6,10 +6,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { green, grey } from '@material-ui/core/colors';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 import { Rounds } from '/imports/api/rounds';
 import { itemTypes } from '/utils/constants';
+
+import { ClueActions } from './ClueActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',
         color: theme.palette.text.primary,
     },
+    important: {
+        backgroundColor: theme.palette.warning.light,
+    },
     isOver: {
         backgroundColor: green[200],
     },
@@ -41,8 +45,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Slot = ({ idx, round, currentPlayer }) => {
-    const { _id, clues } = round;
     const classes = useStyles();
+
+    const { _id, clues } = round;
+    const clue = get(clues, `${currentPlayer.team}.${idx}`);
+
+    // Handle drop
     const [{ isOver }, dropRef] = useDrop({
         accept: [itemTypes.CLUE, itemTypes.SLOT],
         drop: (item) => {
@@ -77,7 +85,8 @@ const Slot = ({ idx, round, currentPlayer }) => {
             };
         },
     });
-    const clue = get(clues, `${currentPlayer.team}.${idx}`);
+
+    // Handle dragging
     const [{ isDragging }, dragRef] = useDrag({
         item: { clue, type: itemTypes.SLOT, idx, team: currentPlayer.team },
         collect: (monitor) => ({
@@ -85,24 +94,37 @@ const Slot = ({ idx, round, currentPlayer }) => {
         }),
     });
 
-    const onClickDelete = () => {
-        Rounds.update({ _id }, { $set: { [`clues.${currentPlayer.team}.${idx}`]: null } });
-    };
+    // empty slot if no clue
+    if (!clue) {
+        return (
+            <Paper
+                ref={dropRef}
+                className={classNames(classes.paper, { [classes.isOver]: isOver })}
+            />
+        );
+    }
 
     const renderSlot = () => (
-        <Paper ref={dropRef} className={classNames(classes.paper, { [classes.isOver]: isOver })}>
-            <div className={classes.paperContent}>{get(clue, 'label', '')}</div>
-            {!!clue && currentPlayer.isStoryteller && (
-                <DeleteIcon
-                    style={{ cursor: 'pointer' }}
-                    onClick={onClickDelete}
-                    fontSize="small"
-                />
+        <Paper
+            ref={dropRef}
+            className={classNames(classes.paper, {
+                [classes.isOver]: isOver,
+                [classes.important]: clue.important,
+            })}
+        >
+            <div
+                className={classes.paperContent}
+                style={{ transform: `rotate(${clue.orientation * 180}deg)` }}
+            >
+                {clue.label}
+            </div>
+            {currentPlayer.isStoryteller && (
+                <ClueActions clue={clue} round={round} currentPlayer={currentPlayer} idx={idx} />
             )}
         </Paper>
     );
 
-    return clue && currentPlayer.isStoryteller ? (
+    return currentPlayer.isStoryteller ? (
         <div className={classes.draggableSlot} ref={dragRef}>
             {renderSlot()}
         </div>

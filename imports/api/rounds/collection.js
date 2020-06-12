@@ -15,6 +15,16 @@ const clueType = new SimpleSchema({
     category: {
         type: String,
     },
+    important: {
+        type: Boolean,
+        defaultValue: false,
+        optional: true,
+    },
+    orientation: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0,
+        optional: true,
+    },
 });
 
 const clueListType = new SimpleSchema({
